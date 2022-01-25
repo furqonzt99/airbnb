@@ -20,10 +20,17 @@ func (hr *HouseRepository) Create(newHouse model.House) (model.House, error) {
 	return newHouse, nil
 }
 
+func (hr *HouseRepository) HouseHasFeature(houseHasFeature model.HouseHasFeatures) error {
+	if err := hr.db.Save(&houseHasFeature).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
 func (hr *HouseRepository) GetAll(offset, pageSize int, search string) ([]model.House, error) {
 	houses := []model.House{}
 
-	hr.db.Preload("Features").Preload("User").Offset(offset).Limit(pageSize).Where("name LIKE ?", "%"+search+"%").Find(&houses)
+	hr.db.Preload("Features").Preload("User").Offset(offset).Limit(pageSize).Where("title LIKE ?", "%"+search+"%").Find(&houses)
 
 	return houses, nil
 }
