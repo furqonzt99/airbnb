@@ -92,6 +92,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/Response200putuser'
+        '400':
+          $ref: '#/components/responses/Response400'
         '401':
           $ref: '#/components/responses/Responsejwtexpired'
     delete:
@@ -103,8 +105,6 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/Response200'
-        '400':
-          $ref: '#/components/responses/Response400deleteuser'
         '401':
           $ref: '#/components/responses/Responsejwtexpired'
   /features:
@@ -591,20 +591,6 @@ components:
                   name:
                     type: string
                     example: tester
-                    
-    Response400deleteuser:
-      description: Not Found
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              code:
-                type: number
-                example: 400
-              message:
-                type: string
-                example: Wrong Password
                 
     Response200getallfeature:
       description: success get all features
@@ -620,7 +606,6 @@ components:
                 type: string
                 example: Successful Operation
               data:
-                type: object
                 example:
                  - id: 1
                    name: wifi
@@ -643,29 +628,14 @@ components:
                 type: string
                 example: Successful Operation
               data:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                    example: 1
-                  user_id:
-                    type: string
-                    example: 1
-                  title:
-                    type: string
-                    example: rumah pondok indah
-                  address:
-                    type: string
-                    example: bikini bottom
-                  city:
-                    type: string
-                    example: jakarta
-                  price:
-                    type: integer
-                    example: 100000
+                example:
+                  id: 1
+                  user_id: 1
+                  title: rumah pondok indah
+                  address: bikini bottom
+                  city: jakarta
+                  price: 100000
                   features:
-                    type: object
-                    example:
                     - id: 1
                       name: wifi
                     - id: 2
@@ -766,29 +736,14 @@ components:
                 type: string
                 example: Successful Operation
               data:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                    example: 1
-                  user_id:
-                    type: string
-                    example: 1
-                  title:
-                    type: string
-                    example: rumah pondok indah
-                  address:
-                    type: string
-                    example: bikini bottom
-                  city:
-                    type: string
-                    example: jakarta
-                  price:
-                    type: integer
-                    example: 100000
+                example:
+                  id: 1
+                  user_id: 1
+                  title: rumah pondok indah
+                  address: bikini bottom
+                  city: jakarta
+                  price: 100000
                   features:
-                    type: object
-                    example:
                     - id: 1
                       name: wifi
                     - id: 2
@@ -808,23 +763,12 @@ components:
                 type: string
                 example: Successful Operation
               data:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                    example: 1
-                  user_id:
-                    type: string
-                    example: 1
-                  user_name:
-                    type: string
-                    example: tester
-                  rating:
-                    type: integer
-                    example: 5
-                  comment:
-                    type: string
-                    example: nyaman
+                example:
+                  id: 1
+                  user_id: 1
+                  user_name: tester
+                  rating: 5
+                  comment: nyaman
                     
     Response200getallrating:
       description: success get all rating
@@ -852,39 +796,7 @@ components:
                    user_name: tester
                    rating: 1
                    comment: sampah
-                   
-    Response200getrating:
-      description: success get rating
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              code:
-                type: number
-                example: 200
-              message:
-                type: string
-                example: Successful Operation
-              data:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                    example: 1
-                  user_id:
-                    type: string
-                    example: 1
-                  user_name:
-                    type: string
-                    example: tester
-                  rating:
-                    type: integer
-                    example: 5
-                  comment:
-                    type: string
-                    example: nyaman
-    
+
     Response200putrating:
       description: success update rating
       content:
@@ -899,23 +811,12 @@ components:
                 type: string
                 example: Successful Operation
               data:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                    example: 1
-                  user_id:
-                    type: string
-                    example: 1
-                  user_name:
-                    type: string
-                    example: tester
-                  rating:
-                    type: integer
-                    example: 3
-                  comment:
-                    type: string
-                    example: biasa
+                example:
+                  id: 1
+                  user_id: 1
+                  user_name: tester
+                  rating: 3
+                  comment: biasa
     
     Response200createtransaction:
       description: success create transaction
