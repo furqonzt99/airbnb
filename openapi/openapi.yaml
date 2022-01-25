@@ -70,7 +70,7 @@ paths:
           $ref: '#/components/responses/Response200getuser'
         '401':
           $ref: '#/components/responses/Responsejwtexpired'
-  /user:
+  /users:
     put:
       security:
         - bearerAuth: []
@@ -86,32 +86,20 @@ paths:
                 email:
                   type: string
                   example: test@gmail.com
-                password:
-                  type: string
-                  example: test123
                 name:
                   type: string
                   example: tester
       responses:
         '200':
           $ref: '#/components/responses/Response200putuser'
-        '404':
-          $ref: '#/components/responses/Response404'
+        '401':
+          $ref: '#/components/responses/Responsejwtexpired'
     delete:
       security:
         - bearerAuth: []
       summary: Delete User
       tags:
         - Users
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                password:
-                  type: string
-                  example: test123
       responses:
         '200':
           $ref: '#/components/responses/Response200'
@@ -119,7 +107,7 @@ paths:
           $ref: '#/components/responses/Response400deleteuser'
         '401':
           $ref: '#/components/responses/Responsejwtexpired'
-  /feature:
+  /features:
     get:
       summary: Get all Category
       tags:
@@ -127,9 +115,7 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/Response200getallfeature'
-        '404':
-          $ref: '#/components/responses/Response404'
-  /house:
+  /houses:
     post:
       security:
         - bearerAuth: []
@@ -164,15 +150,14 @@ paths:
     get:
       summary: Get all houses
       description: 
-        This endpoint have a query params for pagination, but if nil parameters will set to default.
+        This endpoint have a query params for pagination, but if nil parameters will set to default. page 1 perpage 10
       tags:
         - Houses
       responses:
         '200':
           $ref: '#/components/responses/Response200getallhouse'
-        '400':
-          $ref: '#/components/responses/Response400'
-  /house/{houseId}:
+
+  /houses/{houseId}:
     get:
       summary: Get a house by id
       tags:
@@ -186,6 +171,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/Response200gethouse'
+        '400':
+          $ref: '#/components/responses/Response400'
         '404':
           $ref: '#/components/responses/Response404'
     put:
@@ -225,6 +212,8 @@ paths:
           $ref: '#/components/responses/Response400'
         '401':
           $ref: '#/components/responses/Responsejwtexpired'
+        '404':
+          $ref: '#/components/responses/Response404'
     delete:
       security:
         - bearerAuth: []
@@ -242,9 +231,11 @@ paths:
           $ref: '#/components/responses/Response200'
         '400':
           $ref: '#/components/responses/Response400'
+        '401':
+          $ref: '#/components/responses/Responsejwtexpired'
         '404':
           $ref: '#/components/responses/Response404'
-  /rating:
+  /ratings:
     post:
       security:
         - bearerAuth: []
@@ -257,6 +248,9 @@ paths:
             schema:
               type: object
               properties:
+                house_id:
+                  type: integer
+                  example: 1
                 rating:
                   type: integer
                   example: 5
@@ -270,6 +264,7 @@ paths:
           $ref: '#/components/responses/Response400'
         '401':
           $ref: '#/components/responses/Responsejwtexpired'
+        
     get:
       summary: Get all ratings
       tags:
@@ -277,28 +272,7 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/Response200getallrating'
-        '400':
-          $ref: '#/components/responses/Response400'
-        '401':
-          $ref: '#/components/responses/Responsejwtexpired'
-  /rating/{ratingId}:
-    get:
-      summary: Get a rating by id
-      tags:
-        - Ratings
-      parameters:
-        - name: ratingId
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          $ref: '#/components/responses/Response200getrating'
-        '400':
-          $ref: '#/components/responses/Response400'
-        '404':
-          $ref: '#/components/responses/Response404'
+  /ratings/{ratingId}:
     put:
       security:
         - bearerAuth: []
@@ -353,7 +327,7 @@ paths:
           $ref: '#/components/responses/Responsejwtexpired'
         '404':
           $ref: '#/components/responses/Response404'
-  /transaction:
+  /transactions/booking:
     post:
       security:
         - bearerAuth: []
@@ -366,15 +340,15 @@ paths:
             schema:
               type: object
               properties:
-                houseID:
+                house_id:
                   type: integer
                   example: 1
                 checkin_date:
                   type: string
-                  example: "2022-01-19T18:13:01.246Z"
+                  example: "2022-01-19"
                 checkout_date:
                   type: string
-                  example: "2022-01-21T18:13:01.246Z"
+                  example: "2022-01-21"
       responses:
         '200':
           $ref: '#/components/responses/Response200createtransaction'
@@ -382,6 +356,7 @@ paths:
           $ref: '#/components/responses/Response400'
         '401':
           $ref: '#/components/responses/Responsejwtexpired'
+  /transactions:
     get:
       security:
         - bearerAuth: []
@@ -395,7 +370,7 @@ paths:
           $ref: '#/components/responses/Response400'
         '401':
           $ref: '#/components/responses/Responsejwtexpired'
-  /transaction/{transactionId}:
+  /transactions/{transactionId}:
     get:
       security:
         - bearerAuth: []
@@ -417,7 +392,6 @@ paths:
           $ref: '#/components/responses/Responsejwtexpired'
         '404':
           $ref: '#/components/responses/Response404'
-
 components:
   securitySchemes:
     bearerAuth:           
@@ -539,7 +513,7 @@ components:
                 example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJlbWFpbCI6Im5hdWZhbEBnbWFpbC5jb20iLCJleHAiOjE2NDMxOTQ3OTksInJvbGUiOiJhZG1pbiIsInVzZXJJZCI6MX0.p05lPq_ZUrb7CQVE0PDROibsO_uf0ni63Hr-rRlujDA
                 
     Response400login:
-      description: Not Found
+      description: Wrong Password
       content:
         application/json:
           schema:
@@ -547,7 +521,7 @@ components:
             properties:
               code:
                 type: number
-                example: 404
+                example: 400
               message:
                 type: string
                 example: Wrong Password
@@ -588,9 +562,6 @@ components:
                   email:
                     type: string
                     example: test@gmail.com
-                  password:
-                    type: string
-                    example: fjasdoijwethgoajgsodjas2394013t
                   name:
                     type: string
                     example: tester
@@ -617,9 +588,6 @@ components:
                   email:
                     type: string
                     example: test@gmail.com
-                  password:
-                    type: string
-                    example: fjasdoijwethgoajgsodjas2394013t
                   name:
                     type: string
                     example: tester
@@ -633,7 +601,7 @@ components:
             properties:
               code:
                 type: number
-                example: 404
+                example: 400
               message:
                 type: string
                 example: Wrong Password
@@ -680,7 +648,7 @@ components:
                   id:
                     type: integer
                     example: 1
-                  userID:
+                  user_id:
                     type: string
                     example: 1
                   title:
@@ -695,6 +663,14 @@ components:
                   price:
                     type: integer
                     example: 100000
+                  features:
+                    type: object
+                    example:
+                    - id: 1
+                      name: wifi
+                    - id: 2
+                      name: bathtub
+                    
                     
     Response200getallhouse:
       description: success get all features
@@ -719,17 +695,31 @@ components:
                 type: object
                 example:
                  - id: 1
-                   userID: 1
+                   user_id: 1
+                   user_name: tester
                    title: rumah pondok indah
                    address: bikini bottom
                    city: jakarta
                    price: 100000
+                   ratings: 4.21
+                   features:
+                    - id: 1
+                      name: wifi
+                    - id: 2
+                      name: bathtub
                  - id: 2
-                   userID: 2
+                   user_id: 2
+                   user_name: tester2
                    title: rumah pondok jelek
                    address: malboro
                    city: ujung dunia
                    price: 500000 
+                   ratings: 3.5
+                   features:
+                    - id: 1
+                      name: wifi
+                    - id: 2
+                      name: bathtub
                    
     Response200gethouse:
       description: success get house
@@ -746,25 +736,21 @@ components:
                 example: Successful Operation
               data:
                 type: object
-                properties:
-                  id:
-                    type: integer
-                    example: 1
-                  userID:
-                    type: string
-                    example: 1
-                  title:
-                    type: string
-                    example: rumah pondok indah
-                  address:
-                    type: string
-                    example: bikini bottom
-                  city:
-                    type: string
-                    example: jakarta
-                  price:
-                    type: integer
-                    example: 100000
+                example:
+                 - id: 1
+                   user_id: 1
+                   user_name: tester
+                   title: rumah pondok indah
+                   address: bikini bottom
+                   city: jakarta
+                   price: 100000
+                   ratings: 4.21
+                   features:
+                    - id: 1
+                      name: wifi
+                    - id: 2
+                      name: bathtub
+                  
                     
     Response200puthouse:
       description: success get house
@@ -785,7 +771,7 @@ components:
                   id:
                     type: integer
                     example: 1
-                  userID:
+                  user_id:
                     type: string
                     example: 1
                   title:
@@ -800,6 +786,13 @@ components:
                   price:
                     type: integer
                     example: 100000
+                  features:
+                    type: object
+                    example:
+                    - id: 1
+                      name: wifi
+                    - id: 2
+                      name: bathtub
                     
     Response200createrating:
       description: success create rating
@@ -820,9 +813,12 @@ components:
                   id:
                     type: integer
                     example: 1
-                  userID:
+                  user_id:
                     type: string
                     example: 1
+                  user_name:
+                    type: string
+                    example: tester
                   rating:
                     type: integer
                     example: 5
@@ -847,11 +843,13 @@ components:
                 type: object
                 example:
                  - id: 1
-                   userID: 1
+                   user_id: 1
+                   user_name: tester
                    rating: 5
                    comment: nyaman
                  - id: 2
-                   userID: 1
+                   user_id: 1
+                   user_name: tester
                    rating: 1
                    comment: sampah
                    
@@ -874,9 +872,12 @@ components:
                   id:
                     type: integer
                     example: 1
-                  userID:
+                  user_id:
                     type: string
                     example: 1
+                  user_name:
+                    type: string
+                    example: tester
                   rating:
                     type: integer
                     example: 5
@@ -903,15 +904,18 @@ components:
                   id:
                     type: integer
                     example: 1
-                  userID:
+                  user_id:
                     type: string
                     example: 1
+                  user_name:
+                    type: string
+                    example: tester
                   rating:
                     type: integer
                     example: 3
                   comment:
                     type: string
-                    example: 
+                    example: biasa
     
     Response200createtransaction:
       description: success create transaction
@@ -927,41 +931,19 @@ components:
                 type: string
                 example: Successful Operation
               data:
-                type: object
-                properties:
-                  ID:
-                    type: integer
-                    example: 1
-                  UserID:
-                    type: integer
-                    example: 1
-                  HouseID:
-                    type: integer
-                    example: 1
-                  InvoiceID:
-                    type: string
-                    example: 62E3D9455D1A4793AC2CC84902B725A7
-                  PaymentURL:
-                    type: string
-                    example: https://checkout-staging.xendit.co/web/61ed71229690adcf0110bda7
-                  BankID:
-                    type: string
-                    example: ""
-                  PaymentMethod:
-                    type: string
-                    example: ""
-                  Checkindate:
-                    type: string
-                    example: "2022-01-19T18:13:01.246Z"
-                  Checkoutdate:
-                    type: string
-                    example: "2022-01-21T18:13:01.246Z"
-                  Totalprice:
-                    type: integer
-                    example: 300000
-                  Status:
-                    type: string
-                    example: PENDING
+                example:
+                 - id: 1
+                   user_id: 1
+                   house_id: 1
+                   invoice_id: "62E3D9455D1A4793AC2CC84902B725A7"
+                   payment_url: "https://checkout-staging.xendit.co/web/61ed71229690adcf0110bda7"
+                   bank_id: ""
+                   payment_method: ""
+                   paid_at: "0000-00-00T00:00:00.000Z"
+                   checkin_date: "2022-01-19"
+                   checkout_date: "2022-01-21"
+                   total_price: 300000
+                   status: PENDING
     Response200getalltransaction:
       description: success create transaction
       content:
@@ -977,28 +959,30 @@ components:
                 example: Successful Operation
               data:
                 example:
-                 - ID: 1
-                   UserID: 1
-                   HouseID: 1
-                   InvoiceID: "62E3D9455D1A4793AC2CC84902B725A7"
-                   PaymentURL: "https://checkout-staging.xendit.co/web/61ed71229690adcf0110bda7"
-                   BankID: ""
-                   PaymentMethod: ""
-                   Checkindate: "2022-01-19T18:13:01.246Z"
-                   Checkoutdate: "2022-01-21T18:13:01.246Z"
-                   Totalprice: 300000
-                   Status: PENDING
-                 - ID: 2
-                   UserID: 1
-                   HouseID: 2
-                   InvoiceID: "62E3D9455D1A4793AC2CC84902B725A7"
-                   PaymentURL: "https://checkout-staging.xendit.co/web/61ed71229690adcf0110bda7"
-                   BankID: ""
-                   PaymentMethod: ""
-                   Checkindate: "2022-01-22T18:13:01.246Z"
-                   Checkoutdate: "2022-01-27T18:13:01.246Z"
-                   Totalprice: 500000
-                   Status: PENDING
+                 - id: 1
+                   user_id: 1
+                   house_id: 1
+                   invoice_id: "62E3D9455D1A4793AC2CC84902B725A7"
+                   payment_url: "https://checkout-staging.xendit.co/web/61ed71229690adcf0110bda7"
+                   bank_id: ""
+                   payment_method: ""
+                   paid_at: "0000-00-00T00:00:00.000Z"
+                   checkin_date: "2022-01-19"
+                   checkout_date: "2022-01-21"
+                   total_price: 300000
+                   status: PENDING
+                 - id: 2
+                   user_id: 1
+                   house_id: 2
+                   invoice_id: "62E3D9455D1A4793AC2CC84902B725A7"
+                   payment_url: "https://checkout-staging.xendit.co/web/61ed71229690adcf0110bda7"
+                   bank_id: ""
+                   payment_method: ""
+                   paid_at: "0000-00-00T00:00:00.000Z"
+                   checkin_date: "2022-01-22"
+                   checkout_date: "2022-01-27"
+                   total_price: 500000
+                   status: PENDING
                    
     Response200gettransaction:
       description: success get transaction
@@ -1014,37 +998,16 @@ components:
                 type: string
                 example: Successful Operation
               data:
-                properties:
-                  ID:
-                    type: integer
-                    example: 1
-                  UserID:
-                    type: integer
-                    example: 1
-                  HouseID:
-                    type: integer
-                    example: 1
-                  InvoiceID:
-                    type: string
-                    example: 62E3D9455D1A4793AC2CC84902B725A7
-                  PaymentURL:
-                    type: string
-                    example: https://checkout-staging.xendit.co/web/61ed71229690adcf0110bda7
-                  BankID:
-                    type: string
-                    example: ""
-                  PaymentMethod:
-                    type: string
-                    example: ""
-                  Checkindate:
-                    type: string
-                    example: "2022-01-19T18:13:01.246Z"
-                  Checkoutdate:
-                    type: string
-                    example: "2022-01-21T18:13:01.246Z"
-                  Totalprice:
-                    type: integer
-                    example: 300000
-                  Status:
-                    type: string
-                    example: PENDING
+                example:
+                 - id: 1
+                   user_id: 1
+                   house_id: 1
+                   invoice_id: "62E3D9455D1A4793AC2CC84902B725A7"
+                   payment_url: "https://checkout-staging.xendit.co/web/61ed71229690adcf0110bda7"
+                   bank_id: ""
+                   payment_method: ""
+                   paid_at: "0000-00-00T00:00:00.000Z"
+                   checkin_date: "2022-01-19"
+                   checkout_date: "2022-01-21"
+                   total_price: 300000
+                   status: PENDING
