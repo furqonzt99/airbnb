@@ -149,7 +149,7 @@ func (hc HouseController) UpdateHouseController() echo.HandlerFunc {
 	}
 }
 
-func (hc HouseController) DeleteProductCtrl() echo.HandlerFunc {
+func (hc HouseController) DeleteHouseCtrl() echo.HandlerFunc {
 
 	return func(c echo.Context) error {
 		var err error
