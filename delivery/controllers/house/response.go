@@ -34,5 +34,10 @@ type HouseResponse struct {
 	Address  string  `json:"address"`
 	City     string  `json:"city"`
 	Price    float64 `json:"price"`
-	Features []model.Feature
+	Features []FeatureResponse
+}
+
+type FeatureResponse struct {
+	ID   uint   `json:"id"`
+	Name string `json:"name"`
 }

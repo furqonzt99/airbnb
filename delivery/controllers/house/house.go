@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/furqonzt99/airbnb/delivery/common"
+	"github.com/furqonzt99/airbnb/delivery/middleware"
 	"github.com/furqonzt99/airbnb/model"
 	"github.com/furqonzt99/airbnb/repository/house"
 	"github.com/labstack/echo/v4"
@@ -21,24 +22,35 @@ func NewHouseControllers(prorep house.HouseInterface) *HouseController {
 func (hc HouseController) CreateHouseController() echo.HandlerFunc {
 
 	return func(c echo.Context) error {
-		newProductReq := CreateHouseRequestFormat{}
-		c.Bind(&newProductReq)
+		userId, _ := middleware.ExtractTokenUser(c)
 
-		newProduct := model.House{
-			Title:    newProductReq.Title,
-			Address:  newProductReq.Address,
-			City:     newProductReq.City,
-			Price:    newProductReq.Price,
-			Features: newProductReq.Features,
+		newHouseReq := CreateHouseRequestFormat{}
+		c.Bind(&newHouseReq)
+
+		newHouse := model.House{
+			UserID:  uint(userId),
+			Title:   newHouseReq.Title,
+			Address: newHouseReq.Address,
+			City:    newHouseReq.City,
+			Price:   newHouseReq.Price,
 		}
 
-		product, err := hc.Repo.Create(newProduct)
-
+		house, err := hc.Repo.Create(newHouse)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
 		}
 
-		return c.JSON(http.StatusOK, common.SuccessResponse(product))
+		for _, feature := range newHouseReq.Features {
+			err := hc.Repo.HouseHasFeature(model.HouseHasFeatures{
+				HouseID:   house.ID,
+				FeatureID: uint(feature),
+			})
+			if err != nil {
+				return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
+			}
+		}
+
+		return c.JSON(http.StatusOK, common.NewSuccessOperationResponse())
 	}
 }
 
@@ -76,7 +88,6 @@ func (hc HouseController) GetAllHouseController() echo.HandlerFunc {
 					Address:  item.Address,
 					City:     item.City,
 					Price:    item.Price,
-					Features: item.Features,
 				},
 			)
 		}
@@ -104,7 +115,6 @@ func (hc HouseController) GetHouseController() echo.HandlerFunc {
 			Address:  house.Address,
 			City:     house.City,
 			Price:    house.Price,
-			Features: house.Features,
 		}
 
 		return c.JSON(http.StatusOK, common.SuccessResponse(data))
@@ -122,11 +132,10 @@ func (hc HouseController) UpdateHouseController() echo.HandlerFunc {
 		}
 
 		newHouse := model.House{
-			Title:    PutHouseReq.Title,
-			Address:  PutHouseReq.Address,
-			City:     PutHouseReq.City,
-			Price:    PutHouseReq.Price,
-			Features: PutHouseReq.Features,
+			Title:   PutHouseReq.Title,
+			Address: PutHouseReq.Address,
+			City:    PutHouseReq.City,
+			Price:   PutHouseReq.Price,
 		}
 
 		result, err := hc.Repo.Update(newHouse, id)
@@ -142,7 +151,6 @@ func (hc HouseController) UpdateHouseController() echo.HandlerFunc {
 			Address:  result.Address,
 			City:     result.City,
 			Price:    result.Price,
-			Features: result.Features,
 		}
 
 		return c.JSON(http.StatusOK, common.SuccessResponse(data))
