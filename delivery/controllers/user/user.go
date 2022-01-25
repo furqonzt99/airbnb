@@ -12,15 +12,15 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type UsersController struct {
+type UserController struct {
 	Repo user.UserInterface
 }
 
-func NewUsersControllers(usrep user.UserInterface) *UsersController {
-	return &UsersController{Repo: usrep}
+func NewUsersControllers(usrep user.UserInterface) *UserController {
+	return &UserController{Repo: usrep}
 }
 
-func (uscon UsersController) RegisterController() echo.HandlerFunc {
+func (uscon UserController) RegisterController() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		newUserReq := RegisterUserRequestFormat{}
 		c.Bind(&newUserReq)
@@ -50,7 +50,7 @@ func (uscon UsersController) RegisterController() echo.HandlerFunc {
 	}
 }
 
-func (uscon UsersController) LoginController() echo.HandlerFunc {
+func (uscon UserController) LoginController() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var login model.User
 		c.Bind(&login)
@@ -75,7 +75,7 @@ func (uscon UsersController) LoginController() echo.HandlerFunc {
 	}
 }
 
-func (uscon UsersController) GetUserController() echo.HandlerFunc {
+func (uscon UserController) GetUserController() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		userId, _ := middleware.ExtractTokenUser(c)
 
@@ -90,7 +90,7 @@ func (uscon UsersController) GetUserController() echo.HandlerFunc {
 	}
 }
 
-func (uscon UsersController) UpdateUserController() echo.HandlerFunc {
+func (uscon UserController) UpdateUserController() echo.HandlerFunc {
 
 	return func(c echo.Context) error {
 		userId, _ := middleware.ExtractTokenUser(c)
@@ -125,7 +125,7 @@ func (uscon UsersController) UpdateUserController() echo.HandlerFunc {
 	}
 }
 
-func (uscon UsersController) DeleteUserCtrl() echo.HandlerFunc {
+func (uscon UserController) DeleteUserCtrl() echo.HandlerFunc {
 
 	return func(c echo.Context) error {
 		userId, _ := middleware.ExtractTokenUser(c)

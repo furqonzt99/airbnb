@@ -7,7 +7,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-func RegisterUserPath(e *echo.Echo, userCtrl *user.UsersController) {
+func RegisterUserPath(e *echo.Echo, userCtrl *user.UserController) {
 
 	e.POST("/register", userCtrl.RegisterController())
 	e.POST("/login", userCtrl.LoginController())
