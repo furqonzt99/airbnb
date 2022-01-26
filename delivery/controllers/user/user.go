@@ -52,8 +52,12 @@ func (uscon UserController) RegisterController() echo.HandlerFunc {
 
 func (uscon UserController) LoginController() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var login model.User
+		var login UserLoginRequestFormat
 		c.Bind(&login)
+
+		if err := c.Validate(login); err != nil {
+			return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
+		}
 
 		user, err := uscon.Repo.Login(login.Email)
 		if err != nil {
@@ -96,7 +100,9 @@ func (uscon UserController) UpdateUserController() echo.HandlerFunc {
 		user, _ := middleware.ExtractTokenUser(c)
 
 		updateUserReq := PutUserRequestFormat{}
-		if err := c.Bind(&updateUserReq); err != nil {
+		c.Bind(&updateUserReq)
+
+		if err := c.Validate(updateUserReq); err != nil {
 			return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
 		}
 
@@ -125,7 +131,7 @@ func (uscon UserController) UpdateUserController() echo.HandlerFunc {
 	}
 }
 
-func (uscon UserController) DeleteUserCtrl() echo.HandlerFunc {
+func (uscon UserController) DeleteUserController() echo.HandlerFunc {
 
 	return func(c echo.Context) error {
 		userId, _ := middleware.ExtractTokenUser(c)
