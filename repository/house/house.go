@@ -48,7 +48,7 @@ func (hr *HouseRepository) Get(houseId int) (model.House, error) {
 func (hr *HouseRepository) Update(newHouse model.House, houseId, userId int) (model.House, error) {
 	house := model.House{}
 
-	if err := hr.db.Preload("Features").Preload("User").First(&house, "id = ? AND user_id = ?", houseId, userId).Error; err != nil {
+	if err := hr.db.First(&house, "id = ? AND user_id = ?", houseId, userId).Error; err != nil {
 		return house, err
 	}
 

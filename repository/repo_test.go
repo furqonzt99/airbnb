@@ -188,6 +188,20 @@ func TestHouse(t *testing.T) {
 		assert.Equal(t, res[0].Address, "jalan ujung")
 	})
 
+	t.Run("Get House", func(t *testing.T) {
+		houseId := 1
+		res, err := houseRepo.Get(houseId)
+		assert.Nil(t, err)
+		assert.Equal(t, res.Title, "rumah")
+		assert.Equal(t, res.Address, "jalan ujung")
+	})
+
+	t.Run("Error Get House", func(t *testing.T) {
+		houseId := 100
+		_, err := houseRepo.Get(houseId)
+		assert.NotNil(t, err)
+	})
+
 	t.Run("Update House", func(t *testing.T) {
 		var mockHouse model.House
 		mockHouse.Title = "rumah2"
@@ -195,7 +209,26 @@ func TestHouse(t *testing.T) {
 		mockHouse.City = "indonesia"
 		mockHouse.Price = 100000
 
-		res, err := houseRepo.Update(mockHouse, 1, 1)
+		houseId := 1
+		userId := 1
+
+		res, err := houseRepo.Update(mockHouse, houseId, userId)
+		assert.Nil(t, err)
+		assert.Equal(t, res.Title, "rumah2")
+		assert.Equal(t, res.Address, "jalan awal")
+	})
+
+	t.Run("Error Update House", func(t *testing.T) {
+		var mockHouse model.House
+		mockHouse.Title = "rumah2"
+		mockHouse.Address = "jalan awal"
+		mockHouse.City = "indonesia"
+		mockHouse.Price = 100000
+
+		houseId := 100
+		userId := 100
+
+		res, err := houseRepo.Update(mockHouse, houseId, userId)
 		assert.Nil(t, err)
 		assert.Equal(t, res.Title, "rumah2")
 		assert.Equal(t, res.Address, "jalan awal")
