@@ -44,7 +44,15 @@ func (rc RatingController) Create(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
 	}
 
-	return c.JSON(http.StatusOK, common.SuccessResponse(ratingData)) 
+	response := RatingResponse{
+		HouseID:  int(ratingData.HouseID),
+		UserID:   int(ratingData.UserID),
+		Username: ratingData.User.Name,
+		Rating:   ratingData.Rating,
+		Comment:  ratingData.Comment,
+	}
+
+	return c.JSON(http.StatusOK, common.SuccessResponse(response)) 
 }
 
 func (rc RatingController) Update(c echo.Context) error {
@@ -78,7 +86,15 @@ func (rc RatingController) Update(c echo.Context) error {
 		return c.JSON(http.StatusNotFound, common.NewNotFoundResponse())
 	}
 
-	return c.JSON(http.StatusOK, common.SuccessResponse(ratingData)) 
+	response := RatingResponse{
+		HouseID:  int(ratingData.HouseID),
+		UserID:   int(ratingData.UserID),
+		Username: ratingData.User.Name,
+		Rating:   ratingData.Rating,
+		Comment:  ratingData.Comment,
+	}
+
+	return c.JSON(http.StatusOK, common.SuccessResponse(response)) 
 }
 
 func (rc RatingController) Delete(c echo.Context) error {

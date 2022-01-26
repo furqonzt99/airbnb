@@ -5,4 +5,5 @@ type Rating struct {
 	UserID uint `gorm:"primaryKey"`
 	Rating int
 	Comment string
+	User User
 }
