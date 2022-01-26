@@ -1,6 +1,7 @@
 package transaction
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -112,4 +113,40 @@ func (tc TransactionController) Callback(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, common.NewSuccessOperationResponse())
+}
+
+func (tc TransactionController) GetAll(c echo.Context) error {
+
+	user, err := mw.ExtractTokenUser(c)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
+	}
+
+	transactions, err := tc.Repository.GetAll(user.UserID)
+
+	if err != nil {
+		return c.JSON(http.StatusNotFound, common.NewNotFoundResponse())
+	}
+
+	transactionDatas := []TransactionResponse{}
+
+	for _, td := range transactions {
+
+		transactionDatas = append(transactionDatas, TransactionResponse{
+			ID:            int(td.ID),
+			UserID:        int(td.UserID),
+			HouseID:       int(td.HouseID),
+			InvoiceID:     td.InvoiceID,
+			PaymentUrl:    td.PaymentUrl,
+			BankID:        td.BankID,
+			PaymentMethod: td.PaymentMethod,
+			PaidAt:        fmt.Sprint(td.PaidAt),
+			CheckinDate:   fmt.Sprint(td.CheckinDate),
+			CheckoutDate:  fmt.Sprint(td.CheckoutDate),
+			TotalPrice:    td.TotalPrice,
+			Status:        td.Status,
+		})
+	}
+
+	return c.JSON(http.StatusOK, common.SuccessResponse(transactionDatas))
 }

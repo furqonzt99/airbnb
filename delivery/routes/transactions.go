@@ -11,4 +11,5 @@ func RegisterTransactionPath(e *echo.Echo, TransactionController *transaction.Tr
 
 	e.POST("/transactions/booking", TransactionController.Booking, middleware.JWT([]byte(constant.JWT_SECRET_KEY)))
 	e.POST("/transactions/callback", TransactionController.Callback)
+	e.GET("/transactions", TransactionController.GetAll, middleware.JWT([]byte(constant.JWT_SECRET_KEY)))
 }
