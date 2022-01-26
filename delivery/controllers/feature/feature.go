@@ -16,7 +16,7 @@ func NewFeatureControllers(fr feature.FeatureInterface) *FeatureController {
 	return &FeatureController{Repo: fr}
 }
 
-func (fc FeatureController) GetAllFeatureCtrl() echo.HandlerFunc {
+func (fc FeatureController) GetAllFeatureController() echo.HandlerFunc {
 
 	return func(c echo.Context) error {
 

@@ -7,5 +7,5 @@ import (
 
 func RegisterFeaturePath(e *echo.Echo, featureCtrl *feature.FeatureController) {
 
-	e.GET("/features", featureCtrl.GetAllFeatureCtrl())
+	e.GET("/features", featureCtrl.GetAllFeatureController())
 }
