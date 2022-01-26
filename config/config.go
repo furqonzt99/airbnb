@@ -56,6 +56,7 @@ func initConfig() *AppConfig {
 
 	constant.JWT_SECRET_KEY = os.Getenv("JWT_SECRET_KEY")
 	constant.XENDIT_CALLBACK_TOKEN = os.Getenv("XENDIT_CALLBACK_TOKEN")
+	constant.PAYMENT_DURATION = os.Getenv("PAYMENT_DURATION")
 
 	Mode = os.Getenv("MODE")
 
