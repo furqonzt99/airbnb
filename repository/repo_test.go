@@ -88,13 +88,15 @@ func TestUser(t *testing.T) {
 	})
 
 	t.Run("Get User", func(t *testing.T) {
-		res, err := userRepo.Get(1)
+		userId := 1
+		res, err := userRepo.Get(userId)
 		assert.Nil(t, err)
 		assert.Equal(t, res, res)
 	})
 
 	t.Run("Error Get User No ID", func(t *testing.T) {
-		_, err := userRepo.Get(100)
+		userId := 100
+		_, err := userRepo.Get(userId)
 		assert.NotNil(t, err)
 	})
 
@@ -104,7 +106,9 @@ func TestUser(t *testing.T) {
 		mockUser.Password = "test321"
 		mockUser.Name = "tester2"
 
-		res, err := userRepo.Update(mockUser, 1)
+		userId := 1
+
+		res, err := userRepo.Update(mockUser, userId)
 		assert.Nil(t, err)
 		assert.Equal(t, mockUser.Email, res.Email)
 		assert.Equal(t, mockUser.Password, res.Password)
@@ -115,18 +119,22 @@ func TestUser(t *testing.T) {
 		var mockUser model.User
 		mockUser.Email = "test@gmail.com"
 
-		_, err := userRepo.Update(mockUser, 100)
+		userId := 100
+
+		_, err := userRepo.Update(mockUser, userId)
 		assert.NotNil(t, err)
 	})
 
 	t.Run("Delete User", func(t *testing.T) {
-		res, err := userRepo.Delete(1)
+		userId := 1
+		res, err := userRepo.Delete(userId)
 		assert.Nil(t, err)
 		assert.Equal(t, res, res)
 	})
 
 	t.Run("Error Delete User No ID", func(t *testing.T) {
-		_, err := userRepo.Delete(100)
+		userId := 100
+		_, err := userRepo.Delete(userId)
 		assert.NotNil(t, err)
 	})
 }
@@ -173,8 +181,8 @@ func TestHouse(t *testing.T) {
 	})
 
 	t.Run("Get All My House", func(t *testing.T) {
-		ID := 1
-		res, err := houseRepo.GetAllMine(ID)
+		userId := 1
+		res, err := houseRepo.GetAllMine(userId)
 		assert.Nil(t, err)
 		assert.Equal(t, res[0].Title, "rumah")
 		assert.Equal(t, res[0].Address, "jalan ujung")
@@ -193,4 +201,40 @@ func TestHouse(t *testing.T) {
 		assert.Equal(t, res.Address, "jalan awal")
 	})
 
+	t.Run("Delete House", func(t *testing.T) {
+		houseId := 1
+		userId := 1
+		_, err := houseRepo.Delete(houseId, userId)
+		assert.Nil(t, err)
+	})
+
+	t.Run("Error Delete House No ID Or UserID", func(t *testing.T) {
+		houseId := 100
+		userId := 100
+		_, err := houseRepo.Delete(houseId, userId)
+		assert.NotNil(t, err)
+	})
+
+	t.Run("Save House Has Feature ", func(t *testing.T) {
+		var mockHouseFeature model.HouseHasFeatures
+		mockHouseFeature.HouseID = 1
+		mockHouseFeature.FeatureID = 1
+
+		err := houseRepo.HouseHasFeature(mockHouseFeature)
+		assert.Equal(t, err, nil)
+	})
+
+	t.Run("Error Save House Has Feature  No ID", func(t *testing.T) {
+		var mockHouseFeature model.HouseHasFeatures
+
+		err := houseRepo.HouseHasFeature(mockHouseFeature)
+		assert.NotNil(t, err)
+	})
+
+	t.Run("Delete House Has Feature", func(t *testing.T) {
+		houseId := 1
+
+		err := houseRepo.HouseHasFeatureDelete(houseId)
+		assert.Equal(t, err, nil)
+	})
 }

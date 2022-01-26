@@ -75,9 +75,7 @@ func (hr *HouseRepository) HouseHasFeature(houseHasFeature model.HouseHasFeature
 
 func (hr *HouseRepository) HouseHasFeatureDelete(houseId int) error {
 	house := []model.HouseHasFeatures{}
-	if err := hr.db.Find(&house, "id = ?", houseId).Error; err != nil {
-		return err
-	}
+	hr.db.Find(&house, "house_id = ?", houseId)
 	hr.db.Delete(&house)
 	return nil
 }
