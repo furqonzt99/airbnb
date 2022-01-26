@@ -6,7 +6,7 @@ type TransactionResponse struct {
 	HouseID int `json:"house_id"`
 	InvoiceID string `json:"invoice_id"`
 	PaymentUrl string `json:"payment_url"`
-	BankID string `json:"bank_id"`
+	PaymentChannel string `json:"payment_channel"`
 	PaymentMethod string `json:"payment_method"`
 	PaidAt string `json:"paid_at"`
 	CheckinDate string `json:"checkin_date"`

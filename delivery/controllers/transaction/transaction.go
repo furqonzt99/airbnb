@@ -124,7 +124,7 @@ func (tc TransactionController) Callback(c echo.Context) error {
 	var data model.Transaction
 	data.PaidAt, _ = time.Parse(time.RFC3339, callbackRequest.PaidAt)
 	data.PaymentMethod = callbackRequest.PaymentMethod
-	data.BankID = callbackRequest.BankID
+	data.PaymentChannel = callbackRequest.PaymentChannel
 	data.Status = callbackRequest.Status
 
 	_, err = tc.Repository.Update(callbackRequest.ExternalID, data)
@@ -160,7 +160,7 @@ func (tc TransactionController) GetAll(c echo.Context) error {
 			HouseID:       int(td.HouseID),
 			InvoiceID:     td.InvoiceID,
 			PaymentUrl:    td.PaymentUrl,
-			BankID:        td.BankID,
+			PaymentChannel: td.PaymentChannel,
 			PaymentMethod: td.PaymentMethod,
 			PaidAt:        fmt.Sprint(td.PaidAt),
 			CheckinDate:   fmt.Sprint(td.CheckinDate),
@@ -196,7 +196,7 @@ func (tc TransactionController) GetByTransaction(c echo.Context) error {
 		HouseID:       int(transaction.UserID),
 		InvoiceID:     transaction.InvoiceID,
 		PaymentUrl:    transaction.PaymentUrl,
-		BankID:        transaction.BankID,
+		PaymentChannel: transaction.PaymentChannel,
 		PaymentMethod: transaction.PaymentMethod,
 		PaidAt:        fmt.Sprint(transaction.PaidAt),
 		CheckinDate:   fmt.Sprint(transaction.CheckinDate),
