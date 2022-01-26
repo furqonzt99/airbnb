@@ -124,7 +124,9 @@ func (tc TransactionController) GetAll(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
 	}
 
-	transactions, err := tc.Repository.GetAll(user.UserID)
+	status := c.QueryParam("status")
+
+	transactions, err := tc.Repository.GetAll(user.UserID, status)
 
 	if err != nil {
 		return c.JSON(http.StatusNotFound, common.NewNotFoundResponse())
