@@ -12,6 +12,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.10.0 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
+	github.com/xendit/xendit-go v1.0.5 // indirect
 )
 
 require (

@@ -68,7 +68,7 @@ func (uscon UserController) LoginController() echo.HandlerFunc {
 		var token string
 
 		if hash {
-			token, _ = middleware.CreateToken(int(user.ID))
+			token, _ = middleware.CreateToken(int(user.ID), user.Email)
 		}
 
 		return c.JSON(http.StatusOK, common.SuccessResponse(token))
@@ -77,9 +77,9 @@ func (uscon UserController) LoginController() echo.HandlerFunc {
 
 func (uscon UserController) GetUserController() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		userId, _ := middleware.ExtractTokenUser(c)
+		userJwt, _ := middleware.ExtractTokenUser(c)
 
-		user, _ := uscon.Repo.Get(userId)
+		user, _ := uscon.Repo.Get(userJwt.UserID)
 
 		data := UserResponse{
 			ID:    user.ID,
@@ -93,7 +93,7 @@ func (uscon UserController) GetUserController() echo.HandlerFunc {
 func (uscon UserController) UpdateUserController() echo.HandlerFunc {
 
 	return func(c echo.Context) error {
-		userId, _ := middleware.ExtractTokenUser(c)
+		user, _ := middleware.ExtractTokenUser(c)
 
 		updateUserReq := PutUserRequestFormat{}
 		if err := c.Bind(&updateUserReq); err != nil {
@@ -109,14 +109,14 @@ func (uscon UserController) UpdateUserController() echo.HandlerFunc {
 			updateUser.Password = string(hash)
 		}
 
-		userData, err := uscon.Repo.Update(updateUser, userId)
+		userData, err := uscon.Repo.Update(updateUser, user.UserID)
 
 		if err != nil {
 			return c.JSON(http.StatusNotFound, common.ErrorResponse(404, "User not found"))
 		}
 
 		data := UserResponse{
-			ID:    uint(userId),
+			ID:    uint(user.UserID),
 			Name:  userData.Name,
 			Email: userData.Email,
 		}
@@ -130,7 +130,7 @@ func (uscon UserController) DeleteUserCtrl() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		userId, _ := middleware.ExtractTokenUser(c)
 
-		uscon.Repo.Delete(userId)
+		uscon.Repo.Delete(userId.UserID)
 
 		return c.JSON(http.StatusOK, common.NewSuccessOperationResponse())
 	}

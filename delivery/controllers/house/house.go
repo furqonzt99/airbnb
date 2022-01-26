@@ -22,13 +22,13 @@ func NewHouseControllers(prorep house.HouseInterface) *HouseController {
 func (hc HouseController) CreateHouseController() echo.HandlerFunc {
 
 	return func(c echo.Context) error {
-		userId, _ := middleware.ExtractTokenUser(c)
+		user, _ := middleware.ExtractTokenUser(c)
 
 		newHouseReq := CreateHouseRequestFormat{}
 		c.Bind(&newHouseReq)
 
 		newHouse := model.House{
-			UserID:  uint(userId),
+			UserID:  uint(user.UserID),
 			Title:   newHouseReq.Title,
 			Address: newHouseReq.Address,
 			City:    newHouseReq.City,
