@@ -7,6 +7,7 @@ type Transaction interface {
 	GetByStatus(userId int, status string) ([]model.Transaction, error)
 	Get(userId int) (model.Transaction, error)
 	GetByInvoice(invId string) (model.Transaction, error)
+	// GetByTransactionId(userId, trxId int) (model.Transaction, error)
 	
 	// CheckAvailability(userId int) (model.Transaction, error)
 	

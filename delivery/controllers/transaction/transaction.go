@@ -62,6 +62,8 @@ func (tc TransactionController) Booking(c echo.Context) error {
 
 	// add payment url to db
 	updateData := model.Transaction{}
+	updateData.PaymentUrl = transactionPayment.PaymentUrl
+	updateData.TotalPrice = transactionPayment.TotalPrice
 	tc.Repository.Update(invoiceId, updateData)
 
 	// reformat response
