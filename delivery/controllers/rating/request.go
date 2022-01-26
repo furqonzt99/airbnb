@@ -19,11 +19,11 @@ type UpdateRatingRequest struct {
 	Comment string `json:"comment"`
 }
 
-type TransactionValidator struct {
+type RatingValidator struct {
 	Validator *validator.Validate
 }
 
-func (tv *TransactionValidator) Validate(i interface{}) error {
+func (tv *RatingValidator) Validate(i interface{}) error {
 	if err := tv.Validator.Struct(i); err != nil {
 		// Optionally, you could return the error to give each route more control over the status code
 		return echo.NewHTTPError(http.StatusBadRequest, common.NewBadRequestResponse())

@@ -12,10 +12,10 @@ import (
 )
 
 type RatingController struct {
-	Repository rr.RatingRepository
+	Repository rr.Rating
 }
 
-func NewRatingController(repo rr.RatingRepository) *RatingController {
+func NewRatingController(repo rr.Rating) *RatingController {
 	return &RatingController{Repository: repo}
 }
 
