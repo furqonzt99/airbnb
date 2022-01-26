@@ -38,6 +38,8 @@ func InitialMigrate(db *gorm.DB) {
 		db.AutoMigrate(&model.Transaction{})
 
 		seed.FeatureSeed(db)
+		seed.UserSeed(db)
+		seed.HouseSeed(db)
 	} else {
 		db.AutoMigrate(&model.User{})
 		db.AutoMigrate(&model.House{})
