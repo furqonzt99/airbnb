@@ -1,6 +1,9 @@
 package house
 
-import "github.com/furqonzt99/airbnb/model"
+import (
+	"github.com/furqonzt99/airbnb/delivery/controllers/rating"
+	"github.com/furqonzt99/airbnb/model"
+)
 
 type CreateHouseResponseFormat struct {
 	Message string      `json:"message"`
@@ -34,7 +37,9 @@ type HouseResponse struct {
 	Address  string            `json:"address"`
 	City     string            `json:"city"`
 	Price    float64           `json:"price"`
+	Rating   int			   `json:"rating"`
 	Features []FeatureResponse `json:"features"`
+	Ratings  []rating.RatingResponse `json:"ratings"`
 }
 
 type FeatureResponse struct {

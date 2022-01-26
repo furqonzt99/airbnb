@@ -3,6 +3,7 @@ package house
 import (
 	"github.com/furqonzt99/airbnb/model"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type HouseRepository struct {
@@ -23,7 +24,7 @@ func (hr *HouseRepository) Create(newHouse model.House) (model.House, error) {
 func (hr *HouseRepository) GetAll(offset, pageSize int, search string) ([]model.House, error) {
 	houses := []model.House{}
 
-	hr.db.Preload("Features").Preload("User").Offset(offset).Limit(pageSize).Where("title LIKE ?", "%"+search+"%").Find(&houses)
+	hr.db.Preload("Features").Preload("User").Preload("Ratings.User").Preload(clause.Associations).Offset(offset).Limit(pageSize).Where("title LIKE ?", "%"+search+"%").Find(&houses)
 
 	return houses, nil
 }
@@ -31,14 +32,14 @@ func (hr *HouseRepository) GetAll(offset, pageSize int, search string) ([]model.
 func (hr *HouseRepository) GetAllMine(userId int) ([]model.House, error) {
 	houses := []model.House{}
 
-	hr.db.Preload("Features").Preload("User").Where("user_id=?", userId).Find(&houses)
+	hr.db.Preload("Features").Preload("User").Preload("Ratings.User").Preload(clause.Associations).Where("user_id=?", userId).Find(&houses)
 
 	return houses, nil
 }
 
 func (hr *HouseRepository) Get(houseId int) (model.House, error) {
 	house := model.House{}
-	if err := hr.db.Preload("Features").Preload("User").Where("id = ?", houseId).First(&house).Error; err != nil {
+	if err := hr.db.Preload("Features").Preload("User").Preload("Ratings.User").Preload(clause.Associations).Where("id = ?", houseId).First(&house).Error; err != nil {
 		return house, err
 	}
 
