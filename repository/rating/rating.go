@@ -18,7 +18,13 @@ func (rr RatingRepository) Create(rating model.Rating) (model.Rating, error) {
 		return rating, err
 	}
 
-	return rating, nil
+	var r model.Rating
+
+	if err := rr.db.Preload("User").First(&r, "user_id = ? AND house_id = ?", &rating.UserID, &rating.HouseID).Error; err != nil {
+		return r, err
+	}
+
+	return r, nil
 }
 
 func (rr *RatingRepository) Update(rating model.Rating) (model.Rating, error) {
@@ -29,6 +35,10 @@ func (rr *RatingRepository) Update(rating model.Rating) (model.Rating, error) {
 	}
 
 	rr.db.Model(&r).Updates(rating)
+
+	if err := rr.db.Preload("User").First(&r, "user_id = ? AND house_id = ?", &rating.UserID, &rating.HouseID).Error; err != nil {
+		return r, err
+	}
 
 	return r, nil
 }
