@@ -6,11 +6,11 @@ import (
 
 type House struct {
 	gorm.Model
-	UserID   uint
-	Title    string
-	Address  string
-	City     string
-	Price    float64
+	UserID   uint    `gorm:"NOT NULL"`
+	Title    string  `gorm:"NOT NULL"`
+	Address  string  `gorm:"NOT NULL"`
+	City     string  `gorm:"NOT NULL"`
+	Price    float64 `gorm:"NOT NULL"`
 	User     User
 	Features []Feature `gorm:"many2many:house_has_features;"`
 }
