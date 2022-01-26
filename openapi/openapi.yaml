@@ -133,6 +133,15 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/Response200getallhouse'
+  
+  /myhouses:
+    get:
+      summary: Get all my houses
+      tags:
+        - Houses
+      responses:
+        '200':
+          $ref: '#/components/responses/Response200getmyhouse'
 
   /houses/{houseId}:
     get:
@@ -229,13 +238,6 @@ paths:
         '401':
           $ref: '#/components/responses/Responsejwtexpired'
         
-    get:
-      summary: Get all ratings
-      tags:
-        - Ratings
-      responses:
-        '200':
-          $ref: '#/components/responses/Response200getallrating'
   /ratings/{ratingId}:
     put:
       security:
@@ -595,7 +597,7 @@ components:
                     
                     
     Response200getallhouse:
-      description: success get all features
+      description: success get all houses
       content:
         application/json:
           schema:
@@ -642,9 +644,9 @@ components:
                       name: wifi
                     - id: 2
                       name: bathtub
-                   
-    Response200gethouse:
-      description: success get house
+    
+    Response200getmyhouse:
+      description: success get all my houses
       content:
         application/json:
           schema:
@@ -656,6 +658,12 @@ components:
               message:
                 type: string
                 example: Successful Operation
+              page: 
+                type: integer
+                example: 1
+              per_page: 
+                type: integer
+                example: 10
               data:
                 type: object
                 example:
@@ -672,10 +680,53 @@ components:
                       name: wifi
                     - id: 2
                       name: bathtub
+                 - id: 2
+                   user_id: 1
+                   user_name: tester2
+                   title: rumah pondok jelek
+                   address: malboro
+                   city: ujung dunia
+                   price: 500000 
+                   ratings: 3.5
+                   features:
+                    - id: 1
+                      name: wifi
+                    - id: 2
+                      name: bathtub
+                      
+    Response200gethouse:
+      description: success get house
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: number
+                example: 200
+              message:
+                type: string
+                example: Successful Operation
+              data:
+                type: object
+                example:
+                   id: 1
+                   user_id: 1
+                   user_name: tester
+                   title: rumah pondok indah
+                   address: bikini bottom
+                   city: jakarta
+                   price: 100000
+                   ratings: 4.21
+                   features:
+                    - id: 1
+                      name: wifi
+                    - id: 2
+                      name: bathtub
                   
                     
     Response200puthouse:
-      description: success get house
+      description: success update house
       content:
         application/json:
           schema:
@@ -717,37 +768,11 @@ components:
               data:
                 example:
                   id: 1
+                  house_id: 1
                   user_id: 1
                   user_name: tester
                   rating: 5
                   comment: nyaman
-                    
-    Response200getallrating:
-      description: success get all rating
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              code:
-                type: number
-                example: 200
-              message:
-                type: string
-                example: Successful Operation
-              data:
-                type: object
-                example:
-                 - id: 1
-                   user_id: 1
-                   user_name: tester
-                   rating: 5
-                   comment: nyaman
-                 - id: 2
-                   user_id: 1
-                   user_name: tester
-                   rating: 1
-                   comment: sampah
 
     Response200putrating:
       description: success update rating
@@ -785,7 +810,7 @@ components:
                 example: Successful Operation
               data:
                 example:
-                 - id: 1
+                   id: 1
                    user_id: 1
                    house_id: 1
                    invoice_id: "62E3D9455D1A4793AC2CC84902B725A7"
@@ -797,8 +822,9 @@ components:
                    checkout_date: "2022-01-21"
                    total_price: 300000
                    status: PENDING
+                   
     Response200getalltransaction:
-      description: success create transaction
+      description: success get all transaction
       content:
         application/json:
           schema:
@@ -852,7 +878,7 @@ components:
                 example: Successful Operation
               data:
                 example:
-                 - id: 1
+                   id: 1
                    user_id: 1
                    house_id: 1
                    invoice_id: "62E3D9455D1A4793AC2CC84902B725A7"
