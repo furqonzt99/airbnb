@@ -25,14 +25,14 @@ func (tr *TransactionRepository) GetAll(userId int, status string) ([]model.Tran
 	return transactions, nil
 }
 
-func (tr *TransactionRepository) GetByTransactionId(userId, trxId int) ([]model.Transaction, error) {
-	var transactions []model.Transaction
+func (tr *TransactionRepository) GetByTransactionId(userId, trxId int) (model.Transaction, error) {
+	var transaction model.Transaction
 
-	if err := tr.db.Preload("User").Preload("House").Where("user_id = ?", userId).Find(&transactions, trxId).Error; err != nil {
-		return nil, err
+	if err := tr.db.Preload("User").Preload("House").Where("user_id = ?", userId).First(&transaction, trxId).Error; err != nil {
+		return transaction, err
 	}
 
-	return transactions, nil
+	return transaction, nil
 }
 
 func (tr *TransactionRepository) IsHouseAvailable(houseId int, checkinDate, checkoutDate time.Time) (bool, error) {

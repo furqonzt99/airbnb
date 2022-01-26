@@ -3,6 +3,7 @@ package transaction
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -170,4 +171,39 @@ func (tc TransactionController) GetAll(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, common.SuccessResponse(transactionDatas))
+}
+
+func (tc TransactionController) GetByTransaction(c echo.Context) error {
+
+	user, err := mw.ExtractTokenUser(c)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
+	}
+
+	trxId, err := strconv.Atoi(c.Param("id")) 
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
+	}
+
+	transaction, err := tc.Repository.GetByTransactionId(user.UserID, trxId)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, common.NewNotFoundResponse())
+	}
+
+	transactionData := TransactionResponse{
+		ID:            trxId,
+		UserID:        user.UserID,
+		HouseID:       int(transaction.UserID),
+		InvoiceID:     transaction.InvoiceID,
+		PaymentUrl:    transaction.PaymentUrl,
+		BankID:        transaction.BankID,
+		PaymentMethod: transaction.PaymentMethod,
+		PaidAt:        fmt.Sprint(transaction.PaidAt),
+		CheckinDate:   fmt.Sprint(transaction.CheckinDate),
+		CheckoutDate:  fmt.Sprint(transaction.CheckoutDate),
+		TotalPrice:    transaction.TotalPrice,
+		Status:        transaction.Status,
+	}
+
+	return c.JSON(http.StatusOK, common.SuccessResponse(transactionData))
 }
