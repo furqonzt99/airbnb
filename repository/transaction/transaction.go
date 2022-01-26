@@ -43,10 +43,10 @@ func (tr *TransactionRepository) Get(userId int) (model.Transaction, error) {
 	return transaction, nil
 }
 
-func (tr *TransactionRepository) GetByInvoice(userId int, invId string) (model.Transaction, error) {
+func (tr *TransactionRepository) GetByInvoice(invId string) (model.Transaction, error) {
 	var transaction model.Transaction
 
-	if err := tr.db.Preload("User").Preload("House").Where("user_id = ? AND invoice_id = ?", userId, invId).First(&transaction).Error; err != nil {
+	if err := tr.db.Preload("User").Preload("House").Where("invoice_id = ?", invId).First(&transaction).Error; err != nil {
 		return transaction, err
 	}
 
@@ -67,10 +67,10 @@ func (tr *TransactionRepository) Create(transaction model.Transaction) (model.Tr
 	return t, nil
 }
 
-func (tr *TransactionRepository) Update(userId, transactionId int, transaction model.Transaction) (model.Transaction, error) {
+func (tr *TransactionRepository) Update(invId string, transaction model.Transaction) (model.Transaction, error) {
 	var t model.Transaction
 
-	if err := tr.db.Where("user_id = ?", userId).First(&t, transactionId).Error; err != nil {
+	if err := tr.db.First(&t, "invoice_id = ?", invId).Error; err != nil {
 		return t, err
 	}
 

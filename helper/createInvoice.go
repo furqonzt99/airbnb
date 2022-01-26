@@ -3,9 +3,7 @@ package helper
 import (
 	"fmt"
 	"os"
-	"time"
 
-	"github.com/furqonzt99/airbnb/constant"
 	"github.com/furqonzt99/airbnb/model"
 	"github.com/xendit/xendit-go"
 	"github.com/xendit/xendit-go/invoice"
@@ -13,8 +11,6 @@ import (
 
 func CreateInvoice(transaction model.Transaction, email string) (model.Transaction, error) {
 	xendit.Opt.SecretKey = os.Getenv("XENDIT_SECRET_KEY")
-
-	paymentDuration, _ := time.ParseDuration(constant.PAYMENT_DURATION)
 
 	totalNight := countNight(transaction.CheckinDate, transaction.CheckoutDate)
 	totalPrice := transaction.House.Price * float64(totalNight)
@@ -32,7 +28,6 @@ func CreateInvoice(transaction model.Transaction, email string) (model.Transacti
 		Amount:          totalPrice,
 		Description:     "Invoice " + transaction.InvoiceID + " for " + email,
 		PayerEmail:      email,
-		InvoiceDuration: int(paymentDuration.Seconds()),
 		Items:           items,
 	}
 
