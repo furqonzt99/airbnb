@@ -1,6 +1,8 @@
 package transaction
 
 import (
+	"time"
+
 	"github.com/furqonzt99/airbnb/model"
 	"gorm.io/gorm"
 )
@@ -13,24 +15,36 @@ func NewTransactionRepository(db *gorm.DB) *TransactionRepository {
 	return &TransactionRepository{db: db}
 }
 
-func (tr *TransactionRepository) GetAll(userId int) ([]model.Transaction, error) {
+func (tr *TransactionRepository) GetAll(userId int, status string) ([]model.Transaction, error) {
 	var transactions []model.Transaction
 
-	if err := tr.db.Preload("User").Preload("House").Where("user_id = ?", userId).Find(&transactions).Error; err != nil {
+	if err := tr.db.Preload("User").Preload("House").Where("status lIKE ?", "%"+status+"%").Find(&transactions, "user_id = ?", userId).Error; err != nil {
 		return nil, err
 	}
 
 	return transactions, nil
 }
 
-func (tr *TransactionRepository) GetByStatus(userId int, status string) ([]model.Transaction, error) {
-	var transactions []model.Transaction
+func (tr *TransactionRepository) GetByTransactionId(userId, trxId int) (model.Transaction, error) {
+	var transaction model.Transaction
 
-	if err := tr.db.Preload("User").Preload("House").Where("user_id = ? AND status = ?", userId, status).Find(&transactions).Error; err != nil {
-		return nil, err
+	if err := tr.db.Preload("User").Preload("House").Where("user_id = ?", userId).First(&transaction, trxId).Error; err != nil {
+		return transaction, err
 	}
 
-	return transactions, nil
+	return transaction, nil
+}
+
+func (tr *TransactionRepository) IsHouseAvailable(houseId int, checkinDate, checkoutDate time.Time) (bool, error) {
+	var transactions []model.Transaction
+
+	const CANCEL_PAYMENT_STATUS = "EXPIRED"
+
+	if err := tr.db.Where("checkout_date > ? AND checkin_date < ? AND status <> ?", checkinDate, checkoutDate, CANCEL_PAYMENT_STATUS).First(&transactions, "house_id = ?", houseId).Error; err != nil {
+		return true, err
+	}
+
+	return false, nil
 }
 
 func (tr *TransactionRepository) Get(userId int) (model.Transaction, error) {

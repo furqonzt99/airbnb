@@ -1,7 +1,9 @@
 package transaction
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -38,8 +40,25 @@ func (tc TransactionController) Booking(c echo.Context) error {
 	user, _ := mw.ExtractTokenUser(c)
 	invoiceId := strings.ToUpper(strings.ReplaceAll(uuid.New().String(), "-", ""))
 
-	checkinDate, _ := time.Parse(time.RFC3339, transactionRequest.CheckinDate + "T12:00:00.000Z")
-	checkoutDate, _ := time.Parse(time.RFC3339, transactionRequest.CheckoutDate + "T12:00:00.000Z")
+	checkinDate, _ := time.Parse(time.RFC3339, transactionRequest.CheckinDate + "T00:00:00.000Z")
+	checkoutDate, _ := time.Parse(time.RFC3339, transactionRequest.CheckoutDate + "T00:00:00.000Z")
+
+	// if checkout date < checkin date
+	if !checkoutDate.After(checkinDate) {
+		return c.JSON(http.StatusBadRequest, common.ErrorResponse(http.StatusBadRequest, "Checkout date must after checkin date!"))
+	}
+
+	today := time.Now()
+
+	// checkin or checkout cant past time/date 
+	if !checkinDate.After(today) && !checkoutDate.After(today) {
+		return c.JSON(http.StatusBadRequest, common.ErrorResponse(http.StatusBadRequest, "Checkin date or checkout date cant past date!"))
+	}
+	// check availability
+	isAvailable, _ := tc.Repository.IsHouseAvailable(transactionRequest.HouseID, checkinDate, checkoutDate)
+	if !isAvailable {
+		return c.JSON(http.StatusBadRequest, common.ErrorResponse(http.StatusBadRequest, "House already booked at the date, please choose another date!"))
+	}
 
 	data := model.Transaction{
 		UserID:        uint(user.UserID),
@@ -61,6 +80,8 @@ func (tc TransactionController) Booking(c echo.Context) error {
 
 	// add payment url to db
 	updateData := model.Transaction{}
+	updateData.PaymentUrl = transactionPayment.PaymentUrl
+	updateData.TotalPrice = transactionPayment.TotalPrice
 	tc.Repository.Update(invoiceId, updateData)
 
 	// reformat response
@@ -112,4 +133,77 @@ func (tc TransactionController) Callback(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, common.NewSuccessOperationResponse())
+}
+
+func (tc TransactionController) GetAll(c echo.Context) error {
+
+	user, err := mw.ExtractTokenUser(c)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
+	}
+
+	status := c.QueryParam("status")
+
+	transactions, err := tc.Repository.GetAll(user.UserID, status)
+
+	if err != nil {
+		return c.JSON(http.StatusNotFound, common.NewNotFoundResponse())
+	}
+
+	transactionDatas := []TransactionResponse{}
+
+	for _, td := range transactions {
+
+		transactionDatas = append(transactionDatas, TransactionResponse{
+			ID:            int(td.ID),
+			UserID:        int(td.UserID),
+			HouseID:       int(td.HouseID),
+			InvoiceID:     td.InvoiceID,
+			PaymentUrl:    td.PaymentUrl,
+			BankID:        td.BankID,
+			PaymentMethod: td.PaymentMethod,
+			PaidAt:        fmt.Sprint(td.PaidAt),
+			CheckinDate:   fmt.Sprint(td.CheckinDate),
+			CheckoutDate:  fmt.Sprint(td.CheckoutDate),
+			TotalPrice:    td.TotalPrice,
+			Status:        td.Status,
+		})
+	}
+
+	return c.JSON(http.StatusOK, common.SuccessResponse(transactionDatas))
+}
+
+func (tc TransactionController) GetByTransaction(c echo.Context) error {
+
+	user, err := mw.ExtractTokenUser(c)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
+	}
+
+	trxId, err := strconv.Atoi(c.Param("id")) 
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
+	}
+
+	transaction, err := tc.Repository.GetByTransactionId(user.UserID, trxId)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, common.NewNotFoundResponse())
+	}
+
+	transactionData := TransactionResponse{
+		ID:            trxId,
+		UserID:        user.UserID,
+		HouseID:       int(transaction.UserID),
+		InvoiceID:     transaction.InvoiceID,
+		PaymentUrl:    transaction.PaymentUrl,
+		BankID:        transaction.BankID,
+		PaymentMethod: transaction.PaymentMethod,
+		PaidAt:        fmt.Sprint(transaction.PaidAt),
+		CheckinDate:   fmt.Sprint(transaction.CheckinDate),
+		CheckoutDate:  fmt.Sprint(transaction.CheckoutDate),
+		TotalPrice:    transaction.TotalPrice,
+		Status:        transaction.Status,
+	}
+
+	return c.JSON(http.StatusOK, common.SuccessResponse(transactionData))
 }

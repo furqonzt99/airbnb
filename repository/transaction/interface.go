@@ -1,14 +1,18 @@
 package transaction
 
-import "github.com/furqonzt99/airbnb/model"
+import (
+	"time"
+
+	"github.com/furqonzt99/airbnb/model"
+)
 
 type Transaction interface {
-	GetAll(userId int) ([]model.Transaction, error)
-	GetByStatus(userId int, status string) ([]model.Transaction, error)
+	GetAll(userId int, status string) ([]model.Transaction, error)
 	Get(userId int) (model.Transaction, error)
 	GetByInvoice(invId string) (model.Transaction, error)
+	GetByTransactionId(userId, trxId int) (model.Transaction, error)
 	
-	// CheckAvailability(userId int) (model.Transaction, error)
+	IsHouseAvailable(houseId int, checkinDate, checkoutDate time.Time) (bool, error)
 	
 	Create(model.Transaction) (model.Transaction, error)
 
