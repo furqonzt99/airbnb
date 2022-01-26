@@ -13,6 +13,7 @@ type House struct {
 	Price    float64
 	User     User
 	Features []Feature `gorm:"many2many:house_has_features;"`
+	Ratings  []Rating
 }
 
 type HouseHasFeatures struct {
