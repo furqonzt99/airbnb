@@ -48,10 +48,10 @@ func (tc TransactionController) Booking(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, common.ErrorResponse(http.StatusBadRequest, "Checkout date must after checkin date!"))
 	}
 
-	today := time.Now()
+	yesterday := time.Now().AddDate(0, 0, -1)
 
 	// checkin or checkout cant past time/date 
-	if !checkinDate.After(today) && !checkoutDate.After(today) {
+	if !checkinDate.After(yesterday) || !checkoutDate.After(yesterday) {
 		return c.JSON(http.StatusBadRequest, common.ErrorResponse(http.StatusBadRequest, "Checkin date or checkout date cant past date!"))
 	}
 	// check availability
