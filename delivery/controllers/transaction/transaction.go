@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/furqonzt99/airbnb/constant"
 	"github.com/furqonzt99/airbnb/delivery/common"
 	mw "github.com/furqonzt99/airbnb/delivery/middleware"
 	"github.com/furqonzt99/airbnb/helper"
@@ -58,6 +59,11 @@ func (tc TransactionController) Booking(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, common.ErrorResponse(http.StatusBadRequest, err.Error()))
 	}
 
+	// add payment url to db
+	updateData := model.Transaction{}
+	tc.Repository.Update(invoiceId, updateData)
+
+	// reformat response
 	response := TransactionResponse{
 		ID:            int(transactionData.ID),
 		UserID:        int(transactionData.UserID),
@@ -71,4 +77,39 @@ func (tc TransactionController) Booking(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, common.SuccessResponse(response))
+}
+
+func (tc TransactionController) Callback(c echo.Context) error {
+
+	req := c.Request()
+	headers := req.Header
+
+	xCallbackToken := headers.Get("X-Callback-Token")
+
+	if xCallbackToken != constant.XENDIT_CALLBACK_TOKEN {
+		return c.JSON(http.StatusNotAcceptable, common.NewStatusNotAcceptable())
+	}
+
+	var callbackRequest common.CallbackRequest
+	if err := c.Bind(&callbackRequest); err != nil {
+		return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
+	}
+
+	_, err := tc.Repository.GetByInvoice(callbackRequest.ExternalID) 
+	if err != nil {
+		return c.JSON(http.StatusNotFound, common.NewNotFoundResponse())
+	}
+
+	var data model.Transaction
+	data.PaidAt, _ = time.Parse(time.RFC3339, callbackRequest.PaidAt)
+	data.PaymentMethod = callbackRequest.PaymentMethod
+	data.BankID = callbackRequest.BankID
+	data.Status = callbackRequest.Status
+
+	_, err = tc.Repository.Update(callbackRequest.ExternalID, data)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
+	}
+
+	return c.JSON(http.StatusOK, common.NewSuccessOperationResponse())
 }
