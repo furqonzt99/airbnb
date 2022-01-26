@@ -12,7 +12,7 @@ type Transaction interface {
 	GetByInvoice(invId string) (model.Transaction, error)
 	GetByTransactionId(userId, trxId int) ([]model.Transaction, error)
 	
-	CheckAvailability(houseId int, checkinDate, checkoutDate time.Time) (bool, error)
+	IsHouseAvailable(houseId int, checkinDate, checkoutDate time.Time) (bool, error)
 	
 	Create(model.Transaction) (model.Transaction, error)
 

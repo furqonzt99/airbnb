@@ -39,8 +39,25 @@ func (tc TransactionController) Booking(c echo.Context) error {
 	user, _ := mw.ExtractTokenUser(c)
 	invoiceId := strings.ToUpper(strings.ReplaceAll(uuid.New().String(), "-", ""))
 
-	checkinDate, _ := time.Parse(time.RFC3339, transactionRequest.CheckinDate + "T12:00:00.000Z")
-	checkoutDate, _ := time.Parse(time.RFC3339, transactionRequest.CheckoutDate + "T12:00:00.000Z")
+	checkinDate, _ := time.Parse(time.RFC3339, transactionRequest.CheckinDate + "T00:00:00.000Z")
+	checkoutDate, _ := time.Parse(time.RFC3339, transactionRequest.CheckoutDate + "T00:00:00.000Z")
+
+	// if checkout date < checkin date
+	if !checkoutDate.After(checkinDate) {
+		return c.JSON(http.StatusBadRequest, common.ErrorResponse(http.StatusBadRequest, "Checkout date must after checkin date!"))
+	}
+
+	today := time.Now()
+
+	// checkin or checkout cant past time/date 
+	if !checkinDate.After(today) && !checkoutDate.After(today) {
+		return c.JSON(http.StatusBadRequest, common.ErrorResponse(http.StatusBadRequest, "Checkin date or checkout date cant past date!"))
+	}
+	// check availability
+	isAvailable, _ := tc.Repository.IsHouseAvailable(transactionRequest.HouseID, checkinDate, checkoutDate)
+	if !isAvailable {
+		return c.JSON(http.StatusBadRequest, common.ErrorResponse(http.StatusBadRequest, "House already booked at the date, please choose another date!"))
+	}
 
 	data := model.Transaction{
 		UserID:        uint(user.UserID),

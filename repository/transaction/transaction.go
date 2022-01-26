@@ -35,14 +35,16 @@ func (tr *TransactionRepository) GetByTransactionId(userId, trxId int) ([]model.
 	return transactions, nil
 }
 
-func (tr *TransactionRepository) CheckAvailability(houseId int, checkinDate, checkoutDate time.Time) (bool, error) {
+func (tr *TransactionRepository) IsHouseAvailable(houseId int, checkinDate, checkoutDate time.Time) (bool, error) {
 	var transactions []model.Transaction
 
-	if err := tr.db.Where("checkout_date <= ? AND checkin_date >= ?", checkinDate, checkoutDate).First(&transactions, "house_id = ?", houseId).Error; err != nil {
-		return false, err
+	const CANCEL_PAYMENT_STATUS = "EXPIRED"
+
+	if err := tr.db.Where("checkout_date > ? AND checkin_date < ? AND status <> ?", checkinDate, checkoutDate, CANCEL_PAYMENT_STATUS).First(&transactions, "house_id = ?", houseId).Error; err != nil {
+		return true, err
 	}
 
-	return true, nil
+	return false, nil
 }
 
 func (tr *TransactionRepository) Get(userId int) (model.Transaction, error) {
