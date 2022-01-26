@@ -5,7 +5,9 @@ import (
 	"strconv"
 
 	"github.com/furqonzt99/airbnb/delivery/common"
+	"github.com/furqonzt99/airbnb/delivery/controllers/rating"
 	"github.com/furqonzt99/airbnb/delivery/middleware"
+	"github.com/furqonzt99/airbnb/helper"
 	"github.com/furqonzt99/airbnb/model"
 	"github.com/furqonzt99/airbnb/repository/house"
 	"github.com/labstack/echo/v4"
@@ -86,6 +88,23 @@ func (hc HouseController) GetAllHouseController() echo.HandlerFunc {
 					Name: feature.Name,
 				})
 			}
+			
+			ratingData := []rating.RatingResponse{}
+			ratings := []int{}
+
+			for _, r := range item.Ratings {
+				ratingData = append(ratingData, rating.RatingResponse{
+					HouseID:  int(r.HouseID),
+					UserID:   int(r.UserID),
+					Username: r.User.Name,
+					Rating:   r.Rating,
+					Comment:  r.Comment,
+				})
+
+				ratings = append(ratings, r.Rating)
+			}
+
+			rating := helper.CalculateRatings(ratings)
 
 			data = append(
 				data, HouseResponse{
@@ -96,7 +115,9 @@ func (hc HouseController) GetAllHouseController() echo.HandlerFunc {
 					Address:  item.Address,
 					City:     item.City,
 					Price:    item.Price,
+					Rating: rating,
 					Features: featuresData,
+					Ratings: ratingData,
 				},
 			)
 		}
@@ -121,6 +142,24 @@ func (hc HouseController) GetMyHouseController() echo.HandlerFunc {
 					Name: feature.Name,
 				})
 			}
+
+			ratingData := []rating.RatingResponse{}
+			ratings := []int{}
+
+			for _, r := range item.Ratings {
+				ratingData = append(ratingData, rating.RatingResponse{
+					HouseID:  int(r.HouseID),
+					UserID:   int(r.UserID),
+					Username: r.User.Name,
+					Rating:   r.Rating,
+					Comment:  r.Comment,
+				})
+
+				ratings = append(ratings, r.Rating)
+			}
+
+			rating := helper.CalculateRatings(ratings)
+
 			data = append(
 				data, HouseResponse{
 					ID:       item.ID,
@@ -130,7 +169,9 @@ func (hc HouseController) GetMyHouseController() echo.HandlerFunc {
 					Address:  item.Address,
 					City:     item.City,
 					Price:    item.Price,
+					Rating: rating,
 					Features: featuresData,
+					Ratings: ratingData,
 				},
 			)
 		}
@@ -159,6 +200,23 @@ func (hc HouseController) GetHouseController() echo.HandlerFunc {
 			})
 		}
 
+		ratingData := []rating.RatingResponse{}
+		ratings := []int{}
+
+		for _, r := range house.Ratings {
+			ratingData = append(ratingData, rating.RatingResponse{
+				HouseID:  int(r.HouseID),
+				UserID:   int(r.UserID),
+				Username: r.User.Name,
+				Rating:   r.Rating,
+				Comment:  r.Comment,
+			})
+
+			ratings = append(ratings, r.Rating)
+		}
+
+		rating := helper.CalculateRatings(ratings)
+
 		data := HouseResponse{
 			ID:       house.ID,
 			UserID:   house.User.ID,
@@ -167,7 +225,9 @@ func (hc HouseController) GetHouseController() echo.HandlerFunc {
 			Address:  house.Address,
 			City:     house.City,
 			Price:    house.Price,
+			Rating: rating,
 			Features: featuresData,
+			Ratings: ratingData,
 		}
 
 		return c.JSON(http.StatusOK, common.SuccessResponse(data))
