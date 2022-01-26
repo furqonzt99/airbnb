@@ -79,6 +79,14 @@ func (hc HouseController) GetAllHouseController() echo.HandlerFunc {
 
 		data := []HouseResponse{}
 		for _, item := range houses {
+			featuresData := []FeatureResponse{}
+			for _, feature := range item.Features {
+				featuresData = append(featuresData, FeatureResponse{
+					ID:   feature.ID,
+					Name: feature.Name,
+				})
+			}
+
 			data = append(
 				data, HouseResponse{
 					ID:       item.ID,
@@ -88,10 +96,46 @@ func (hc HouseController) GetAllHouseController() echo.HandlerFunc {
 					Address:  item.Address,
 					City:     item.City,
 					Price:    item.Price,
+					Features: featuresData,
 				},
 			)
 		}
 		return c.JSON(http.StatusOK, common.PaginationResponse(page, perpage, data))
+	}
+}
+
+func (hc HouseController) GetMyHouseController() echo.HandlerFunc {
+
+	return func(c echo.Context) error {
+
+		user, _ := middleware.ExtractTokenUser(c)
+
+		house, _ := hc.Repo.GetAllMine(user.UserID)
+
+		data := []HouseResponse{}
+		for _, item := range house {
+			featuresData := []FeatureResponse{}
+			for _, feature := range item.Features {
+				featuresData = append(featuresData, FeatureResponse{
+					ID:   feature.ID,
+					Name: feature.Name,
+				})
+			}
+			data = append(
+				data, HouseResponse{
+					ID:       item.ID,
+					UserID:   item.User.ID,
+					UserName: item.User.Name,
+					Title:    item.Title,
+					Address:  item.Address,
+					City:     item.City,
+					Price:    item.Price,
+					Features: featuresData,
+				},
+			)
+		}
+
+		return c.JSON(http.StatusOK, common.SuccessResponse(data))
 	}
 }
 
@@ -107,6 +151,14 @@ func (hc HouseController) GetHouseController() echo.HandlerFunc {
 			return c.JSON(http.StatusNotFound, common.NewNotFoundResponse())
 		}
 
+		featuresData := []FeatureResponse{}
+		for _, feature := range house.Features {
+			featuresData = append(featuresData, FeatureResponse{
+				ID:   feature.ID,
+				Name: feature.Name,
+			})
+		}
+
 		data := HouseResponse{
 			ID:       house.ID,
 			UserID:   house.User.ID,
@@ -115,6 +167,7 @@ func (hc HouseController) GetHouseController() echo.HandlerFunc {
 			Address:  house.Address,
 			City:     house.City,
 			Price:    house.Price,
+			Features: featuresData,
 		}
 
 		return c.JSON(http.StatusOK, common.SuccessResponse(data))
@@ -124,36 +177,42 @@ func (hc HouseController) GetHouseController() echo.HandlerFunc {
 func (hc HouseController) UpdateHouseController() echo.HandlerFunc {
 
 	return func(c echo.Context) error {
-		PutHouseReq := PutHouseRequestFormat{}
+		putHouseReq := PutHouseRequestFormat{}
 		id, _ := strconv.Atoi(c.Param("id"))
-		err := c.Bind(&PutHouseReq)
+		user, _ := middleware.ExtractTokenUser(c)
+		err := c.Bind(&putHouseReq)
 		if err != nil {
 			return err
 		}
 
 		newHouse := model.House{
-			Title:   PutHouseReq.Title,
-			Address: PutHouseReq.Address,
-			City:    PutHouseReq.City,
-			Price:   PutHouseReq.Price,
+			Title:   putHouseReq.Title,
+			Address: putHouseReq.Address,
+			City:    putHouseReq.City,
+			Price:   putHouseReq.Price,
 		}
 
-		result, err := hc.Repo.Update(newHouse, id)
+		err = hc.Repo.HouseHasFeatureDelete(id)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
+		}
+
+		_, err = hc.Repo.Update(newHouse, id, user.UserID)
 		if err != nil {
 			return c.JSON(http.StatusNotFound, common.NewBadRequestResponse())
 		}
 
-		data := HouseResponse{
-			ID:       result.ID,
-			UserID:   result.UserID,
-			UserName: result.User.Name,
-			Title:    result.Title,
-			Address:  result.Address,
-			City:     result.City,
-			Price:    result.Price,
+		for _, feature := range putHouseReq.Features {
+			err := hc.Repo.HouseHasFeature(model.HouseHasFeatures{
+				HouseID:   newHouse.ID,
+				FeatureID: uint(feature),
+			})
+			if err != nil {
+				return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
+			}
 		}
 
-		return c.JSON(http.StatusOK, common.SuccessResponse(data))
+		return c.JSON(http.StatusOK, common.NewSuccessOperationResponse())
 	}
 }
 
@@ -162,8 +221,14 @@ func (hc HouseController) DeleteHouseCtrl() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var err error
 		id, _ := strconv.Atoi(c.Param("id"))
+		user, _ := middleware.ExtractTokenUser(c)
 
-		_, err = hc.Repo.Delete(id)
+		err = hc.Repo.HouseHasFeatureDelete(id)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
+		}
+
+		_, err = hc.Repo.Delete(id, user.UserID)
 		if err != nil {
 			return c.JSON(http.StatusNotFound, common.NewNotFoundResponse())
 		}

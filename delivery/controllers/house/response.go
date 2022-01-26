@@ -28,8 +28,8 @@ type DeleteHouseResponseFormat struct {
 
 type HouseResponse struct {
 	ID       uint    `json:"id"`
-	UserID   uint    `json:"userid"`
-	UserName string  `json:"username"`
+	UserID   uint    `json:"user_id"`
+	UserName string  `json:"user_name"`
 	Title    string  `json:"title"`
 	Address  string  `json:"address"`
 	City     string  `json:"city"`
