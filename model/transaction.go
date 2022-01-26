@@ -12,7 +12,7 @@ type Transaction struct {
 	HouseID uint `gorm:"not null"`
 	InvoiceID string
 	PaymentUrl string
-	BankID string
+	PaymentChannel string
 	PaymentMethod string
 	PaidAt time.Time `gorm:"default:null"`
 	CheckinDate time.Time
