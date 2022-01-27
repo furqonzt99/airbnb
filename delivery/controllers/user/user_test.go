@@ -1,4 +1,4 @@
-package test
+package user
 
 import (
 	"bytes"
@@ -11,7 +11,6 @@ import (
 
 	"github.com/furqonzt99/airbnb/constant"
 	"github.com/furqonzt99/airbnb/delivery/common"
-	"github.com/furqonzt99/airbnb/delivery/controllers/user"
 	mw "github.com/furqonzt99/airbnb/delivery/middleware"
 	"github.com/furqonzt99/airbnb/model"
 	"github.com/go-playground/validator/v10"
@@ -27,7 +26,7 @@ var jwtToken string
 func TestUser(t *testing.T) {
 	t.Run("Test Register", func(t *testing.T) {
 		e := echo.New()
-		e.Validator = &user.UserValidator{Validator: validator.New()}
+		e.Validator = &UserValidator{Validator: validator.New()}
 
 		requestBody, _ := json.Marshal(map[string]string{
 			"email":    "test@gmail.com",
@@ -43,10 +42,10 @@ func TestUser(t *testing.T) {
 		context := e.NewContext(req, res)
 		context.SetPath("/register")
 
-		userController := user.NewUsersControllers(mockUserRepository{})
+		userController := NewUsersControllers(mockUserRepository{})
 		userController.RegisterController()(context)
 
-		response := user.RegisterUserResponseFormat{}
+		response := RegisterUserResponseFormat{}
 		json.Unmarshal([]byte(res.Body.Bytes()), &response)
 
 		assert.Equal(t, "Successful Operation", response.Message)
@@ -54,7 +53,7 @@ func TestUser(t *testing.T) {
 
 	t.Run("Error Test Register Password Length Below 8", func(t *testing.T) {
 		e := echo.New()
-		e.Validator = &user.UserValidator{Validator: validator.New()}
+		e.Validator = &UserValidator{Validator: validator.New()}
 
 		requestBody, _ := json.Marshal(map[string]string{
 			"email":    "test@gmail.com",
@@ -70,10 +69,10 @@ func TestUser(t *testing.T) {
 		context := e.NewContext(req, res)
 		context.SetPath("/register")
 
-		userController := user.NewUsersControllers(mockFalseUserRepository{})
+		userController := NewUsersControllers(mockFalseUserRepository{})
 		userController.RegisterController()(context)
 
-		response := user.RegisterUserResponseFormat{}
+		response := RegisterUserResponseFormat{}
 		json.Unmarshal([]byte(res.Body.Bytes()), &response)
 
 		assert.Equal(t, "Bad Request", response.Message)
@@ -81,7 +80,7 @@ func TestUser(t *testing.T) {
 
 	t.Run("Error Test Email Already Exist", func(t *testing.T) {
 		e := echo.New()
-		e.Validator = &user.UserValidator{Validator: validator.New()}
+		e.Validator = &UserValidator{Validator: validator.New()}
 
 		requestBody, _ := json.Marshal(map[string]string{
 			"email":    "test@gmail.com",
@@ -97,10 +96,10 @@ func TestUser(t *testing.T) {
 		context := e.NewContext(req, res)
 		context.SetPath("/register")
 
-		userController := user.NewUsersControllers(mockFalseUserRepository{})
+		userController := NewUsersControllers(mockFalseUserRepository{})
 		userController.RegisterController()(context)
 
-		response := user.RegisterUserResponseFormat{}
+		response := RegisterUserResponseFormat{}
 		json.Unmarshal([]byte(res.Body.Bytes()), &response)
 
 		assert.Equal(t, "Email already exist", response.Message)
@@ -108,7 +107,7 @@ func TestUser(t *testing.T) {
 
 	t.Run("Test Login", func(t *testing.T) {
 		e := echo.New()
-		e.Validator = &user.UserValidator{Validator: validator.New()}
+		e.Validator = &UserValidator{Validator: validator.New()}
 
 		requestBody, _ := json.Marshal(map[string]string{
 			"email":    "test@gmail.com",
@@ -122,7 +121,7 @@ func TestUser(t *testing.T) {
 		context := e.NewContext(req, res)
 		context.SetPath("/login")
 
-		userController := user.NewUsersControllers(mockUserRepository{})
+		userController := NewUsersControllers(mockUserRepository{})
 		userController.LoginController()(context)
 
 		response := common.ResponseSuccess{}
@@ -135,7 +134,7 @@ func TestUser(t *testing.T) {
 
 	t.Run("Error Test Login Password Length Below 8", func(t *testing.T) {
 		e := echo.New()
-		e.Validator = &user.UserValidator{Validator: validator.New()}
+		e.Validator = &UserValidator{Validator: validator.New()}
 
 		requestBody, _ := json.Marshal(map[string]string{
 			"email":    "test@gmail.com",
@@ -149,7 +148,7 @@ func TestUser(t *testing.T) {
 		context := e.NewContext(req, res)
 		context.SetPath("/login")
 
-		userController := user.NewUsersControllers(mockFalseUserRepository{})
+		userController := NewUsersControllers(mockFalseUserRepository{})
 		userController.LoginController()(context)
 
 		response := common.ResponseSuccess{}
@@ -158,34 +157,9 @@ func TestUser(t *testing.T) {
 		assert.Equal(t, "Bad Request", response.Message)
 	})
 
-	// t.Run("Error Test Login Wrong Email", func(t *testing.T) {
-	// 	e := echo.New()
-	// 	e.Validator = &user.UserValidator{Validator: validator.New()}
-
-	// 	requestBody, _ := json.Marshal(map[string]string{
-	// 		"email":    "test@gmail.com",
-	// 		"password": "test1234",
-	// 	})
-
-	// 	req := httptest.NewRequest(http.MethodPost, "/", bytes.NewBuffer(requestBody))
-	// 	res := httptest.NewRecorder()
-
-	// 	req.Header.Set("Content-Type", "application/json")
-	// 	context := e.NewContext(req, res)
-	// 	context.SetPath("/login")
-
-	// 	userController := user.NewUsersControllers(mockFalseUserRepository2{})
-	// 	userController.LoginController()(context)
-
-	// 	response := common.ResponseSuccess{}
-	// 	json.Unmarshal([]byte(res.Body.Bytes()), &response)
-
-	// 	assert.Equal(t, "User not found", response.Message)
-	// })
-
 	t.Run("Error Test Login Wrong Password", func(t *testing.T) {
 		e := echo.New()
-		e.Validator = &user.UserValidator{Validator: validator.New()}
+		e.Validator = &UserValidator{Validator: validator.New()}
 
 		requestBody, _ := json.Marshal(map[string]string{
 			"email":    "test@gmail.com",
@@ -199,7 +173,7 @@ func TestUser(t *testing.T) {
 		context := e.NewContext(req, res)
 		context.SetPath("/login")
 
-		userController := user.NewUsersControllers(mockFalseUserRepository{})
+		userController := NewUsersControllers(mockFalseUserRepository{})
 		userController.LoginController()(context)
 
 		response := common.ResponseSuccess{}
@@ -219,7 +193,7 @@ func TestUser(t *testing.T) {
 		context := e.NewContext(req, res)
 		context.SetPath("/profile")
 
-		userController := user.NewUsersControllers(mockUserRepository{})
+		userController := NewUsersControllers(mockUserRepository{})
 		if err := middleware.JWT([]byte(constant.JWT_SECRET_KEY))(userController.GetUserController())(context); err != nil {
 			log.Fatal(err)
 			return
@@ -233,7 +207,7 @@ func TestUser(t *testing.T) {
 
 	t.Run("Test Update", func(t *testing.T) {
 		e := echo.New()
-		e.Validator = &user.UserValidator{Validator: validator.New()}
+		e.Validator = &UserValidator{Validator: validator.New()}
 
 		requestBody, _ := json.Marshal(map[string]string{
 			"email":    "test2@gmail.com",
@@ -250,7 +224,7 @@ func TestUser(t *testing.T) {
 		context := e.NewContext(req, res)
 		context.SetPath("/users")
 
-		userController := user.NewUsersControllers(mockUserRepository{})
+		userController := NewUsersControllers(mockUserRepository{})
 		if err := middleware.JWT([]byte(constant.JWT_SECRET_KEY))(userController.UpdateUserController())(context); err != nil {
 			log.Fatal(err)
 			return
@@ -264,7 +238,7 @@ func TestUser(t *testing.T) {
 
 	t.Run("Error Test Update Password Length Below 8", func(t *testing.T) {
 		e := echo.New()
-		e.Validator = &user.UserValidator{Validator: validator.New()}
+		e.Validator = &UserValidator{Validator: validator.New()}
 
 		requestBody, _ := json.Marshal(map[string]string{
 			"email":    "test2@gmail.com",
@@ -281,7 +255,7 @@ func TestUser(t *testing.T) {
 		context := e.NewContext(req, res)
 		context.SetPath("/users")
 
-		userController := user.NewUsersControllers(mockFalseUserRepository{})
+		userController := NewUsersControllers(mockFalseUserRepository{})
 		if err := middleware.JWT([]byte(constant.JWT_SECRET_KEY))(userController.UpdateUserController())(context); err != nil {
 			log.Fatal(err)
 			return
@@ -295,7 +269,7 @@ func TestUser(t *testing.T) {
 
 	t.Run("Error Test Update User Not Found", func(t *testing.T) {
 		e := echo.New()
-		e.Validator = &user.UserValidator{Validator: validator.New()}
+		e.Validator = &UserValidator{Validator: validator.New()}
 
 		requestBody, _ := json.Marshal(map[string]string{
 			"email":    "test2@gmail.com",
@@ -312,7 +286,7 @@ func TestUser(t *testing.T) {
 		context := e.NewContext(req, res)
 		context.SetPath("/users")
 
-		userController := user.NewUsersControllers(mockFalseUserRepository{})
+		userController := NewUsersControllers(mockFalseUserRepository{})
 		if err := middleware.JWT([]byte(constant.JWT_SECRET_KEY))(userController.UpdateUserController())(context); err != nil {
 			log.Fatal(err)
 			return
@@ -336,7 +310,7 @@ func TestUser(t *testing.T) {
 		context := e.NewContext(req, res)
 		context.SetPath("/users")
 
-		userController := user.NewUsersControllers(mockUserRepository{})
+		userController := NewUsersControllers(mockUserRepository{})
 		if err := middleware.JWT([]byte(constant.JWT_SECRET_KEY))(userController.DeleteUserController())(context); err != nil {
 			log.Fatal(err)
 			return

@@ -1,4 +1,4 @@
-package test
+package house
 
 import (
 	"bytes"
@@ -11,7 +11,6 @@ import (
 
 	"github.com/furqonzt99/airbnb/constant"
 	"github.com/furqonzt99/airbnb/delivery/common"
-	"github.com/furqonzt99/airbnb/delivery/controllers/house"
 	"github.com/furqonzt99/airbnb/delivery/controllers/user"
 	"github.com/furqonzt99/airbnb/model"
 	"github.com/go-playground/validator/v10"
@@ -19,7 +18,10 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 	"github.com/stretchr/testify/assert"
+	"golang.org/x/crypto/bcrypt"
 )
+
+var jwtToken string
 
 func TestHouse(t *testing.T) {
 	t.Run("Test Login", func(t *testing.T) {
@@ -51,7 +53,7 @@ func TestHouse(t *testing.T) {
 
 	t.Run("Test Create House", func(t *testing.T) {
 		e := echo.New()
-		e.Validator = &house.HouseValidator{Validator: validator.New()}
+		e.Validator = &HouseValidator{Validator: validator.New()}
 
 		requestBody, _ := json.Marshal(map[string]interface{}{
 			"title":    "Rumah Bagus",
@@ -70,13 +72,13 @@ func TestHouse(t *testing.T) {
 		context := e.NewContext(req, res)
 		context.SetPath("/houses")
 
-		houseController := house.NewHouseControllers(mockHouseRepository{})
+		houseController := NewHouseControllers(mockHouseRepository{})
 		if err := middleware.JWT([]byte(constant.JWT_SECRET_KEY))(houseController.CreateHouseController())(context); err != nil {
 			log.Fatal(err)
 			return
 		}
 
-		response := house.CreateHouseResponseFormat{}
+		response := CreateHouseResponseFormat{}
 		json.Unmarshal([]byte(res.Body.Bytes()), &response)
 
 		assert.Equal(t, "Successful Operation", response.Message)
@@ -84,7 +86,7 @@ func TestHouse(t *testing.T) {
 
 	t.Run("Test False Create House", func(t *testing.T) {
 		e := echo.New()
-		e.Validator = &house.HouseValidator{Validator: validator.New()}
+		e.Validator = &HouseValidator{Validator: validator.New()}
 
 		requestBody, _ := json.Marshal(map[string]interface{}{
 			"house_id":   1,
@@ -102,13 +104,13 @@ func TestHouse(t *testing.T) {
 		context := e.NewContext(req, res)
 		context.SetPath("/houses")
 
-		houseController := house.NewHouseControllers(mockFalseHouseRepository{})
+		houseController := NewHouseControllers(mockFalseHouseRepository{})
 		if err := middleware.JWT([]byte(constant.JWT_SECRET_KEY))(houseController.CreateHouseController())(context); err != nil {
 			log.Fatal(err)
 			return
 		}
 
-		response := house.CreateHouseResponseFormat{}
+		response := CreateHouseResponseFormat{}
 		json.Unmarshal([]byte(res.Body.Bytes()), &response)
 
 		assert.Equal(t, "Bad Request", response.Message)
@@ -127,10 +129,10 @@ func TestHouse(t *testing.T) {
 		context.SetParamNames("name")
 		context.SetParamValues("Rumah")
 
-		houseController := house.NewHouseControllers(mockHouseRepository{})
+		houseController := NewHouseControllers(mockHouseRepository{})
 		houseController.GetAllHouseController()(context)
 
-		response := house.GetAllHouseResponseFormat{}
+		response := GetAllHouseResponseFormat{}
 
 		json.Unmarshal([]byte(res.Body.Bytes()), &response)
 		assert.Equal(t, "Successful Operation", response.Message)
@@ -150,10 +152,10 @@ func TestHouse(t *testing.T) {
 		context.SetParamNames("name")
 		context.SetParamValues("Rumah")
 
-		houseController := house.NewHouseControllers(mockFalseHouseRepository{})
+		houseController := NewHouseControllers(mockFalseHouseRepository{})
 		houseController.GetAllHouseController()(context)
 
-		response := house.GetAllHouseResponseFormat{}
+		response := GetAllHouseResponseFormat{}
 
 		json.Unmarshal([]byte(res.Body.Bytes()), &response)
 		assert.Equal(t, "Successful Operation", response.Message)
@@ -172,13 +174,13 @@ func TestHouse(t *testing.T) {
 		context := e.NewContext(req, res)
 		context.SetPath("/myhouses")
 
-		houseController := house.NewHouseControllers(mockHouseRepository{})
+		houseController := NewHouseControllers(mockHouseRepository{})
 		if err := middleware.JWT([]byte(constant.JWT_SECRET_KEY))(houseController.GetMyHouseController())(context); err != nil {
 			log.Fatal(err)
 			return
 		}
 
-		response := house.GetAllHouseResponseFormat{}
+		response := GetAllHouseResponseFormat{}
 
 		json.Unmarshal([]byte(res.Body.Bytes()), &response)
 		assert.Equal(t, "Successful Operation", response.Message)
@@ -196,10 +198,10 @@ func TestHouse(t *testing.T) {
 		context := e.NewContext(req, res)
 		context.SetPath("/houses/:id")
 
-		houseController := house.NewHouseControllers(mockHouseRepository{})
+		houseController := NewHouseControllers(mockHouseRepository{})
 		houseController.GetHouseController()(context)
 
-		response := house.GetHouseResponseFormat{}
+		response := GetHouseResponseFormat{}
 
 		json.Unmarshal([]byte(res.Body.Bytes()), &response)
 		assert.Equal(t, "Successful Operation", response.Message)
@@ -217,10 +219,10 @@ func TestHouse(t *testing.T) {
 		context := e.NewContext(req, res)
 		context.SetPath("/houses/:id")
 
-		houseController := house.NewHouseControllers(mockFalseHouseRepository{})
+		houseController := NewHouseControllers(mockFalseHouseRepository{})
 		houseController.GetHouseController()(context)
 
-		response := house.GetHouseResponseFormat{}
+		response := GetHouseResponseFormat{}
 
 		json.Unmarshal([]byte(res.Body.Bytes()), &response)
 		assert.Equal(t, "Not Found", response.Message)
@@ -228,7 +230,7 @@ func TestHouse(t *testing.T) {
 
 	t.Run("Test Update House", func(t *testing.T) {
 		e := echo.New()
-		e.Validator = &house.HouseValidator{Validator: validator.New()}
+		e.Validator = &HouseValidator{Validator: validator.New()}
 
 		requestBody, _ := json.Marshal(map[string]interface{}{
 			"title":    "Rumah Jelek",
@@ -247,13 +249,13 @@ func TestHouse(t *testing.T) {
 		context := e.NewContext(req, res)
 		context.SetPath("/houses/:id")
 
-		houseController := house.NewHouseControllers(mockHouseRepository{})
+		houseController := NewHouseControllers(mockHouseRepository{})
 		if err := middleware.JWT([]byte(constant.JWT_SECRET_KEY))(houseController.UpdateHouseController())(context); err != nil {
 			log.Fatal(err)
 			return
 		}
 
-		response := house.CreateHouseResponseFormat{}
+		response := CreateHouseResponseFormat{}
 		json.Unmarshal([]byte(res.Body.Bytes()), &response)
 
 		assert.Equal(t, "Successful Operation", response.Message)
@@ -261,7 +263,7 @@ func TestHouse(t *testing.T) {
 
 	t.Run("Error Test Update House", func(t *testing.T) {
 		e := echo.New()
-		e.Validator = &house.HouseValidator{Validator: validator.New()}
+		e.Validator = &HouseValidator{Validator: validator.New()}
 
 		requestBody, _ := json.Marshal(map[string]interface{}{
 			"title":    "Rumah Jelek",
@@ -280,13 +282,13 @@ func TestHouse(t *testing.T) {
 		context := e.NewContext(req, res)
 		context.SetPath("/houses/:id")
 
-		houseController := house.NewHouseControllers(mockFalseHouseRepository{})
+		houseController := NewHouseControllers(mockFalseHouseRepository{})
 		if err := middleware.JWT([]byte(constant.JWT_SECRET_KEY))(houseController.UpdateHouseController())(context); err != nil {
 			log.Fatal(err)
 			return
 		}
 
-		response := house.CreateHouseResponseFormat{}
+		response := CreateHouseResponseFormat{}
 		json.Unmarshal([]byte(res.Body.Bytes()), &response)
 
 		assert.Equal(t, "Bad Request", response.Message)
@@ -294,7 +296,7 @@ func TestHouse(t *testing.T) {
 
 	t.Run("Test Delete House", func(t *testing.T) {
 		e := echo.New()
-		e.Validator = &house.HouseValidator{Validator: validator.New()}
+		e.Validator = &HouseValidator{Validator: validator.New()}
 
 		req := httptest.NewRequest(http.MethodPost, "/", nil)
 		res := httptest.NewRecorder()
@@ -305,13 +307,13 @@ func TestHouse(t *testing.T) {
 		context := e.NewContext(req, res)
 		context.SetPath("/houses/:id")
 
-		houseController := house.NewHouseControllers(mockHouseRepository{})
+		houseController := NewHouseControllers(mockHouseRepository{})
 		if err := middleware.JWT([]byte(constant.JWT_SECRET_KEY))(houseController.DeleteHouseController())(context); err != nil {
 			log.Fatal(err)
 			return
 		}
 
-		response := house.CreateHouseResponseFormat{}
+		response := CreateHouseResponseFormat{}
 		json.Unmarshal([]byte(res.Body.Bytes()), &response)
 
 		assert.Equal(t, "Successful Operation", response.Message)
@@ -319,7 +321,7 @@ func TestHouse(t *testing.T) {
 
 	t.Run("Error Test Delete House", func(t *testing.T) {
 		e := echo.New()
-		e.Validator = &house.HouseValidator{Validator: validator.New()}
+		e.Validator = &HouseValidator{Validator: validator.New()}
 
 		req := httptest.NewRequest(http.MethodPost, "/", nil)
 		res := httptest.NewRecorder()
@@ -330,17 +332,44 @@ func TestHouse(t *testing.T) {
 		context := e.NewContext(req, res)
 		context.SetPath("/houses/:id")
 
-		houseController := house.NewHouseControllers(mockFalseHouseRepository{})
+		houseController := NewHouseControllers(mockFalseHouseRepository{})
 		if err := middleware.JWT([]byte(constant.JWT_SECRET_KEY))(houseController.DeleteHouseController())(context); err != nil {
 			log.Fatal(err)
 			return
 		}
 
-		response := house.CreateHouseResponseFormat{}
+		response := CreateHouseResponseFormat{}
 		json.Unmarshal([]byte(res.Body.Bytes()), &response)
 
 		assert.Equal(t, "Not Found", response.Message)
 	})
+}
+
+type mockUserRepository struct{}
+
+func (m mockUserRepository) Register(newUser model.User) (model.User, error) {
+	hash, _ := bcrypt.GenerateFromPassword([]byte(newUser.Password), 14)
+	return model.User{Email: newUser.Email, Password: string(hash), Name: newUser.Name}, nil
+}
+
+func (m mockUserRepository) Login(email string) (model.User, error) {
+	hash, _ := bcrypt.GenerateFromPassword([]byte("test1234"), 14)
+	return model.User{Email: "test@gmail.com", Password: string(hash), Name: "tester"}, nil
+}
+
+func (m mockUserRepository) Get(userid int) (model.User, error) {
+	hash, _ := bcrypt.GenerateFromPassword([]byte("test1234"), 14)
+	return model.User{Email: "test@gmail.com", Password: string(hash), Name: "tester"}, nil
+}
+
+func (m mockUserRepository) Update(newUser model.User, userId int) (model.User, error) {
+	hash, _ := bcrypt.GenerateFromPassword([]byte("test4321"), 14)
+	return model.User{Email: "test2@gmail.com", Password: string(hash), Name: "tester2"}, nil
+}
+
+func (m mockUserRepository) Delete(userId int) (model.User, error) {
+	hash, _ := bcrypt.GenerateFromPassword([]byte("test4321"), 14)
+	return model.User{Email: "test2@gmail.com", Password: string(hash), Name: "tester2"}, nil
 }
 
 type mockHouseRepository struct{}
