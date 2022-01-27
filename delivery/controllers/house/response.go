@@ -30,15 +30,16 @@ type DeleteHouseResponseFormat struct {
 }
 
 type HouseResponse struct {
-	ID       uint              `json:"id"`
-	UserID   uint              `json:"user_id"`
-	UserName string            `json:"user_name"`
-	Title    string            `json:"title"`
-	Address  string            `json:"address"`
-	City     string            `json:"city"`
-	Price    float64           `json:"price"`
-	Rating   int			   `json:"rating"`
-	Features []FeatureResponse `json:"features"`
+	ID       uint                    `json:"id"`
+	UserID   uint                    `json:"user_id"`
+	UserName string                  `json:"user_name"`
+	Title    string                  `json:"title"`
+	Address  string                  `json:"address"`
+	City     string                  `json:"city"`
+	Price    float64                 `json:"price"`
+	Rating   int                     `json:"rating"`
+	Status   string                  `json:"status"`
+	Features []FeatureResponse       `json:"features"`
 	Ratings  []rating.RatingResponse `json:"ratings"`
 }
 

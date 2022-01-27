@@ -35,6 +35,7 @@ func (hc HouseController) CreateHouseController() echo.HandlerFunc {
 			Address: newHouseReq.Address,
 			City:    newHouseReq.City,
 			Price:   newHouseReq.Price,
+			Status:  newHouseReq.Status,
 		}
 
 		house, err := hc.Repo.Create(newHouse)
@@ -62,6 +63,7 @@ func (hc HouseController) GetAllHouseController() echo.HandlerFunc {
 		page, _ := strconv.Atoi(c.QueryParam("page"))
 		perpage, _ := strconv.Atoi(c.QueryParam("perpage"))
 		search := c.QueryParam("search")
+		city := c.QueryParam("city")
 
 		if page == 0 {
 			page = 1
@@ -73,7 +75,7 @@ func (hc HouseController) GetAllHouseController() echo.HandlerFunc {
 
 		offset := (page - 1) * perpage
 
-		houses, _ := hc.Repo.GetAll(offset, perpage, search)
+		houses, _ := hc.Repo.GetAll(offset, perpage, search, city)
 
 		if len(houses) == 0 {
 			return c.JSON(http.StatusNotFound, common.NewNotFoundResponse())
@@ -88,7 +90,7 @@ func (hc HouseController) GetAllHouseController() echo.HandlerFunc {
 					Name: feature.Name,
 				})
 			}
-			
+
 			ratingData := []rating.RatingResponse{}
 			ratings := []int{}
 
@@ -115,9 +117,10 @@ func (hc HouseController) GetAllHouseController() echo.HandlerFunc {
 					Address:  item.Address,
 					City:     item.City,
 					Price:    item.Price,
-					Rating: rating,
+					Rating:   rating,
+					Status:   item.Status,
 					Features: featuresData,
-					Ratings: ratingData,
+					Ratings:  ratingData,
 				},
 			)
 		}
@@ -169,9 +172,10 @@ func (hc HouseController) GetMyHouseController() echo.HandlerFunc {
 					Address:  item.Address,
 					City:     item.City,
 					Price:    item.Price,
-					Rating: rating,
+					Rating:   rating,
+					Status:   item.Status,
 					Features: featuresData,
-					Ratings: ratingData,
+					Ratings:  ratingData,
 				},
 			)
 		}
@@ -225,9 +229,10 @@ func (hc HouseController) GetHouseController() echo.HandlerFunc {
 			Address:  house.Address,
 			City:     house.City,
 			Price:    house.Price,
-			Rating: rating,
+			Rating:   rating,
+			Status:   house.Status,
 			Features: featuresData,
-			Ratings: ratingData,
+			Ratings:  ratingData,
 		}
 
 		return c.JSON(http.StatusOK, common.SuccessResponse(data))
@@ -250,25 +255,26 @@ func (hc HouseController) UpdateHouseController() echo.HandlerFunc {
 			Address: putHouseReq.Address,
 			City:    putHouseReq.City,
 			Price:   putHouseReq.Price,
+			Status:  putHouseReq.Status,
 		}
 
 		err = hc.Repo.HouseHasFeatureDelete(id)
 		if err != nil {
-			return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
+			return c.JSON(http.StatusBadRequest, common.ErrorResponse(400, err.Error()))
 		}
 
-		_, err = hc.Repo.Update(newHouse, id, user.UserID)
+		updatedHouse, err := hc.Repo.Update(newHouse, id, user.UserID)
 		if err != nil {
 			return c.JSON(http.StatusNotFound, common.NewBadRequestResponse())
 		}
 
 		for _, feature := range putHouseReq.Features {
 			err := hc.Repo.HouseHasFeature(model.HouseHasFeatures{
-				HouseID:   newHouse.ID,
+				HouseID:   updatedHouse.ID,
 				FeatureID: uint(feature),
 			})
 			if err != nil {
-				return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
+				return c.JSON(http.StatusBadRequest, common.ErrorResponse(400, err.Error()))
 			}
 		}
 
