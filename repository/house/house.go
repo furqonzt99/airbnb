@@ -19,10 +19,7 @@ func (hr *HouseRepository) Create(newHouse model.House) (model.House, error) {
 		return newHouse, err
 	}
 
-	var house model.House
-
-	hr.db.Preload("Features").First(&house, "id = ? AND user_id = ?", &newHouse.ID, &newHouse.UserID)
-	return house, nil
+	return newHouse, nil
 }
 
 func (hr *HouseRepository) GetAll(offset, pageSize int, search, city string) ([]model.House, error) {
