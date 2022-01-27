@@ -1,4 +1,4 @@
-package test
+package feature
 
 import (
 	"encoding/json"
@@ -7,13 +7,12 @@ import (
 	"testing"
 
 	"github.com/furqonzt99/airbnb/delivery/common"
-	"github.com/furqonzt99/airbnb/delivery/controllers/feature"
 	"github.com/furqonzt99/airbnb/model"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFeature(t *testing.T) {
+func TestFeatureGetAll(t *testing.T) {
 	t.Run("Test Register", func(t *testing.T) {
 		e := echo.New()
 
@@ -23,7 +22,7 @@ func TestFeature(t *testing.T) {
 		context := e.NewContext(req, res)
 		context.SetPath("/features")
 
-		featureController := feature.NewFeatureControllers(mockFeatureRepository{})
+		featureController := NewFeatureControllers(mockFeatureRepository{})
 		featureController.GetAllFeatureController()(context)
 
 		response := common.ResponseSuccess{}

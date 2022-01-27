@@ -18,6 +18,7 @@ func (hr *HouseRepository) Create(newHouse model.House) (model.House, error) {
 	if err := hr.db.Save(&newHouse).Error; err != nil {
 		return newHouse, err
 	}
+
 	return newHouse, nil
 }
 
