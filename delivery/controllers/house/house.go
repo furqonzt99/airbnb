@@ -258,6 +258,11 @@ func (hc HouseController) UpdateHouseController() echo.HandlerFunc {
 			Status:  putHouseReq.Status,
 		}
 
+		houseData, _ := hc.Repo.Get(id)
+		if houseData.UserID != uint(user.UserID) {
+			return c.JSON(http.StatusNotFound, common.NewNotFoundResponse())
+		}
+
 		err = hc.Repo.HouseHasFeatureDelete(id)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, common.ErrorResponse(400, err.Error()))
