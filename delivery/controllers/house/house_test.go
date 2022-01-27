@@ -388,19 +388,19 @@ func (m mockHouseRepository) Create(newHouse model.House) (model.House, error) {
 }
 
 func (m mockHouseRepository) GetAll(offset, pageSize int, search, city string) ([]model.House, error) {
-	return []model.House{{UserID: 1, Title: "Rumah Bagus", Address: "Jalan Ujung", City: "Indonesia", Price: 100000, Status: "open", Features: []model.Feature{{Name: "wifi"}}}}, nil
+	return []model.House{{UserID: 1, Title: "Rumah Bagus", Address: "Jalan Ujung", City: "Indonesia", Price: 100000, Status: "open", Features: []model.Feature{{Name: "wifi"}}, Ratings: []model.Rating{{Rating: 5}}}}, nil
 }
 
 func (m mockHouseRepository) GetAllMine(userId int) ([]model.House, error) {
-	return []model.House{{UserID: 1, Title: "Rumah Bagus", Address: "Jalan Ujung", City: "Indonesia", Price: 100000, Status: "open", Features: []model.Feature{{Name: "wifi"}}}}, nil
+	return []model.House{{UserID: 1, Title: "Rumah Bagus", Address: "Jalan Ujung", City: "Indonesia", Price: 100000, Status: "open", Features: []model.Feature{{Name: "wifi"}}, Ratings: []model.Rating{{Rating: 5}}}}, nil
 }
 
 func (m mockHouseRepository) Get(houseId int) (model.House, error) {
-	return model.House{UserID: 1, Title: "Rumah Bagus", Address: "Jalan Ujung", City: "Indonesia", Price: 100000, Status: "open", Features: []model.Feature{{Name: "wifi"}}}, nil
+	return model.House{UserID: 1, Title: "Rumah Bagus", Address: "Jalan Ujung", City: "Indonesia", Price: 100000, Status: "open", Features: []model.Feature{{Name: "wifi"}}, Ratings: []model.Rating{{Rating: 5}}}, nil
 }
 
 func (m mockHouseRepository) Update(newHouse model.House, houseId, userId int) (model.House, error) {
-	return model.House{UserID: 1, Title: "Rumah Jelek", Address: "Jalan Awal", City: "Bikini Bottom", Price: 200000, Status: "open", Features: []model.Feature{{Name: "wifi"}}}, nil
+	return model.House{UserID: 1, Title: "Rumah Jelek", Address: "Jalan Awal", City: "Bikini Bottom", Price: 200000, Status: "open", Features: []model.Feature{{Name: "wifi"}}, Ratings: []model.Rating{{Rating: 5}}}, nil
 }
 
 func (m mockHouseRepository) Delete(houseId, userId int) (model.House, error) {
