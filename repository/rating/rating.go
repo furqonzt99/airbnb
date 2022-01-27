@@ -25,6 +25,18 @@ func (rr RatingRepository) Create(rating model.Rating) (model.Rating, error) {
 	return r, nil
 }
 
+func (rr RatingRepository) IsCanGiveRating(userId, houseId int) (bool, error) {
+	var transaction model.Transaction
+
+	const PAID_STATUS = "PAID"
+
+	if err := rr.db.Where("user_id = ? AND house_id = ? AND status = ?", userId, houseId, PAID_STATUS).First(&transaction).Error; err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
 func (rr *RatingRepository) Update(rating model.Rating) (model.Rating, error) {
 	var r model.Rating
 

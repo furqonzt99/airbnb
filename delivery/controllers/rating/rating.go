@@ -32,6 +32,11 @@ func (rc RatingController) Create(c echo.Context) error {
 
 	user, _ := mw.ExtractTokenUser(c)
 
+	isCanGiveRating, _ := rc.Repository.IsCanGiveRating(user.UserID, ratingRequest.HouseID)
+	if !isCanGiveRating {
+		return c.JSON(http.StatusNotFound, common.NewNotFoundResponse())
+	}
+
 	data := model.Rating{
 		HouseID: uint(ratingRequest.HouseID),
 		UserID:  uint(user.UserID),
