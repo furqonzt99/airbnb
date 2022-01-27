@@ -10,6 +10,7 @@ type Transaction struct {
 	gorm.Model
 	UserID uint `gorm:"not null"`
 	HouseID uint `gorm:"not null"`
+	HostID uint `gorm:"not null"`
 	InvoiceID string
 	PaymentUrl string
 	PaymentChannel string

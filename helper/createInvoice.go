@@ -12,7 +12,7 @@ import (
 func CreateInvoice(transaction model.Transaction, email string) (model.Transaction, error) {
 	xendit.Opt.SecretKey = os.Getenv("XENDIT_SECRET_KEY")
 
-	totalNight := countNight(transaction.CheckinDate, transaction.CheckoutDate)
+	totalNight := CountNight(transaction.CheckinDate, transaction.CheckoutDate)
 	totalPrice := transaction.House.Price * float64(totalNight)
 
 	items := []xendit.InvoiceItem{

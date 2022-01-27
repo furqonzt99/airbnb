@@ -14,6 +14,10 @@ type TransactionRequest struct {
 	CheckoutDate string	`json:"checkout_date" validate:"required"`
 }
 
+type RescheduleRequest struct {
+	CheckinDate string `json:"checkin_date" validate:"required"`
+}
+
 type TransactionValidator struct {
 	Validator *validator.Validate
 }

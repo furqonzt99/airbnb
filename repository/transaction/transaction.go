@@ -25,6 +25,16 @@ func (tr *TransactionRepository) GetAll(userId int, status string) ([]model.Tran
 	return transactions, nil
 }
 
+func (tr *TransactionRepository) GetAllHostTransaction(hostId int, status string) ([]model.Transaction, error) {
+	var transactions []model.Transaction
+
+	if err := tr.db.Preload("User").Preload("House").Where("status lIKE ?", "%"+status+"%").Find(&transactions, "host_id = ?", hostId).Error; err != nil {
+		return nil, err
+	}
+
+	return transactions, nil
+}
+
 func (tr *TransactionRepository) GetByTransactionId(userId, trxId int) (model.Transaction, error) {
 	var transaction model.Transaction
 
@@ -33,6 +43,16 @@ func (tr *TransactionRepository) GetByTransactionId(userId, trxId int) (model.Tr
 	}
 
 	return transaction, nil
+}
+
+func (tr *TransactionRepository) GetHostId(houseId int) (int, error) {
+	var host model.House
+
+	if err := tr.db.Select("user_id").First(&host, houseId).Error; err != nil {
+		return int(host.UserID), err
+	}
+
+	return int(host.UserID), nil
 }
 
 func (tr *TransactionRepository) IsHouseAvailable(houseId int, checkinDate, checkoutDate time.Time) (bool, error) {
@@ -47,10 +67,22 @@ func (tr *TransactionRepository) IsHouseAvailable(houseId int, checkinDate, chec
 	return false, nil
 }
 
+func (tr *TransactionRepository) IsHouseAvailableReschedule(trxId, houseId int, checkinDate, checkoutDate time.Time) (bool, error) {
+	var transactions []model.Transaction
+
+	const CANCEL_PAYMENT_STATUS = "EXPIRED"
+
+	if err := tr.db.Where("checkout_date > ? AND checkin_date < ? AND status <> ? AND id <> ?", checkinDate, checkoutDate, CANCEL_PAYMENT_STATUS, trxId).First(&transactions, "house_id = ?", houseId).Error; err != nil {
+		return true, err
+	}
+
+	return false, nil
+}
+
 func (tr *TransactionRepository) Get(userId int) (model.Transaction, error) {
 	var transaction model.Transaction
 
-	if err := tr.db.Preload("User").Preload("House").Where("user_id = ?", userId).First(&transaction).Error; err != nil {
+	if err := tr.db.Preload("User").Preload("House").Where("user_id = ? OR host_id = ?", userId).First(&transaction).Error; err != nil {
 		return transaction, err
 	}
 
