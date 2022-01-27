@@ -23,7 +23,7 @@ import (
 
 var jwtToken string
 
-func TestHouse(t *testing.T) {
+func TestCreateHouse(t *testing.T) {
 	t.Run("Test Login", func(t *testing.T) {
 		e := echo.New()
 		e.Validator = &user.UserValidator{Validator: validator.New()}
@@ -115,7 +115,8 @@ func TestHouse(t *testing.T) {
 
 		assert.Equal(t, "Bad Request", response.Message)
 	})
-
+}
+func TestGetAllHouse(t *testing.T) {
 	t.Run("Test Get All House", func(t *testing.T) {
 		e := echo.New()
 
@@ -161,7 +162,9 @@ func TestHouse(t *testing.T) {
 		assert.Equal(t, "Successful Operation", response.Message)
 		assert.Equal(t, "Rumah Bagus", response.Data[0].Title)
 	})
+}
 
+func TestGetMyHouse(t *testing.T) {
 	t.Run("Test Get My House", func(t *testing.T) {
 		e := echo.New()
 
@@ -186,7 +189,9 @@ func TestHouse(t *testing.T) {
 		assert.Equal(t, "Successful Operation", response.Message)
 		assert.Equal(t, "Rumah Bagus", response.Data[0].Title)
 	})
+}
 
+func TestGetHouse(t *testing.T) {
 	t.Run("Test Get House", func(t *testing.T) {
 		e := echo.New()
 
@@ -227,7 +232,9 @@ func TestHouse(t *testing.T) {
 		json.Unmarshal([]byte(res.Body.Bytes()), &response)
 		assert.Equal(t, "Not Found", response.Message)
 	})
+}
 
+func TestUpdateHouse(t *testing.T) {
 	t.Run("Test Update House", func(t *testing.T) {
 		e := echo.New()
 		e.Validator = &HouseValidator{Validator: validator.New()}
@@ -293,7 +300,9 @@ func TestHouse(t *testing.T) {
 
 		assert.Equal(t, "Bad Request", response.Message)
 	})
+}
 
+func TestDeleteHouse(t *testing.T) {
 	t.Run("Test Delete House", func(t *testing.T) {
 		e := echo.New()
 		e.Validator = &HouseValidator{Validator: validator.New()}

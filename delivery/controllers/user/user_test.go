@@ -23,7 +23,7 @@ import (
 
 var jwtToken string
 
-func TestUser(t *testing.T) {
+func TestRegisterUser(t *testing.T) {
 	t.Run("Test Register", func(t *testing.T) {
 		e := echo.New()
 		e.Validator = &UserValidator{Validator: validator.New()}
@@ -104,7 +104,9 @@ func TestUser(t *testing.T) {
 
 		assert.Equal(t, "Email already exist", response.Message)
 	})
+}
 
+func TestLoginUser(t *testing.T) {
 	t.Run("Test Login", func(t *testing.T) {
 		e := echo.New()
 		e.Validator = &UserValidator{Validator: validator.New()}
@@ -181,7 +183,9 @@ func TestUser(t *testing.T) {
 
 		assert.Equal(t, "Wrong Password", response.Message)
 	})
+}
 
+func TestGetUser(t *testing.T) {
 	t.Run("Test Get User", func(t *testing.T) {
 		e := echo.New()
 
@@ -204,7 +208,9 @@ func TestUser(t *testing.T) {
 		assert.Equal(t, "Successful Operation", response.Message)
 		assert.Equal(t, response.Data.(map[string]interface{})["name"], "tester")
 	})
+}
 
+func TestUpdateUser(t *testing.T) {
 	t.Run("Test Update", func(t *testing.T) {
 		e := echo.New()
 		e.Validator = &UserValidator{Validator: validator.New()}
@@ -297,7 +303,9 @@ func TestUser(t *testing.T) {
 
 		assert.Equal(t, "User not found", response.Message)
 	})
+}
 
+func TestDeleteUser(t *testing.T) {
 	t.Run("Test Delete", func(t *testing.T) {
 		e := echo.New()
 		mw.LogMiddleware(e)
@@ -321,7 +329,6 @@ func TestUser(t *testing.T) {
 
 		assert.Equal(t, "Successful Operation", response.Message)
 	})
-
 }
 
 type mockUserRepository struct{}
