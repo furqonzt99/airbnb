@@ -117,6 +117,7 @@ paths:
                 features:
                    - 1
                    - 2
+                status: open
       responses:
         '200':
           $ref: '#/components/responses/Response200posthouse'
@@ -185,9 +186,10 @@ paths:
                 features:
                   - 1
                   - 2
+                status: close
       responses:
         '200':
-          $ref: '#/components/responses/Response200puthouse'
+          $ref: '#/components/responses/Response200'
         '400':
           $ref: '#/components/responses/Response400'
         '401':
@@ -292,7 +294,7 @@ paths:
     post:
       security:
         - bearerAuth: []
-      summary: Create transaction
+      summary: Booking transaction
       tags:
         - Transactions
       requestBody:
@@ -314,7 +316,7 @@ paths:
     put:
       security:
         - bearerAuth: []
-      summary: Create transaction
+      summary: Reschedule Transaction
       tags:
         - Transactions
       parameters:
@@ -340,7 +342,7 @@ paths:
     get:
       security:
         - bearerAuth: []
-      summary: Get all Orders
+      summary: Get all orders
       tags:
         - Transactions
       responses:
@@ -372,6 +374,21 @@ paths:
           $ref: '#/components/responses/Responsejwtexpired'
         '404':
           $ref: '#/components/responses/Response404'
+  /transactions/host:
+    get:
+      security:
+        - bearerAuth: []
+      summary: Get all host transaction
+      tags:
+        - Transactions
+      responses:
+        '200':
+          $ref: '#/components/responses/Response200getalltransactionhost'
+        '400':
+          $ref: '#/components/responses/Response400'
+        '401':
+          $ref: '#/components/responses/Responsejwtexpired'
+  
 components:
   securitySchemes:
     bearerAuth:           
@@ -620,6 +637,7 @@ components:
                       name: wifi
                     - id: 2
                       name: bathtub
+                  status: open
                     
                     
     Response200getallhouse:
@@ -651,7 +669,8 @@ components:
                    address: bikini bottom
                    city: jakarta
                    price: 100000
-                   ratings: 4.21
+                   rating: 4.21
+                   status: open
                    features:
                     - id: 1
                       name: wifi
@@ -664,12 +683,14 @@ components:
                    address: malboro
                    city: ujung dunia
                    price: 500000 
-                   ratings: 3.5
+                   rating: 3.5
+                   status: open
                    features:
                     - id: 1
                       name: wifi
                     - id: 2
                       name: bathtub
+                      
     
     Response200getmyhouse:
       description: success get all my houses
@@ -701,6 +722,7 @@ components:
                    city: jakarta
                    price: 100000
                    ratings: 4.21
+                   status: open
                    features:
                     - id: 1
                       name: wifi
@@ -714,6 +736,7 @@ components:
                    city: ujung dunia
                    price: 500000 
                    ratings: 3.5
+                   status: close
                    features:
                     - id: 1
                       name: wifi
@@ -744,35 +767,8 @@ components:
                    city: jakarta
                    price: 100000
                    ratings: 4.21
+                   status : open
                    features:
-                    - id: 1
-                      name: wifi
-                    - id: 2
-                      name: bathtub
-                  
-                    
-    Response200puthouse:
-      description: success update house
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              code:
-                type: number
-                example: 200
-              message:
-                type: string
-                example: Successful Operation
-              data:
-                example:
-                  id: 1
-                  user_id: 1
-                  title: rumah pondok indah
-                  address: bikini bottom
-                  city: jakarta
-                  price: 100000
-                  features:
                     - id: 1
                       name: wifi
                     - id: 2
@@ -839,9 +835,10 @@ components:
                    id: 1
                    user_id: 1
                    house_id: 1
+                   host_id: 2
                    invoice_id: "62E3D9455D1A4793AC2CC84902B725A7"
                    payment_url: "https://checkout-staging.xendit.co/web/61ed71229690adcf0110bda7"
-                   bank_id: ""
+                   payment_channel: ""
                    payment_method: ""
                    paid_at: "0000-00-00T00:00:00.000Z"
                    checkin_date: "2022-01-19"
@@ -865,8 +862,51 @@ components:
               data:
                 example:
                  - id: 1
+                   user_id: 2
+                   house_id: 1
+                   host_id: 1
+                   invoice_id: "62E3D9455D1A4793AC2CC84902B725A7"
+                   payment_url: "https://checkout-staging.xendit.co/web/61ed71229690adcf0110bda7"
+                   bank_id: ""
+                   payment_method: ""
+                   paid_at: "0000-00-00T00:00:00.000Z"
+                   checkin_date: "2022-01-19"
+                   checkout_date: "2022-01-21"
+                   total_price: 300000
+                   status: PENDING
+                 - id: 2
+                   user_id: 2
+                   house_id: 2
+                   host_id: 1
+                   invoice_id: "62E3D9455D1A4793AC2CC84902B725A7"
+                   payment_url: "https://checkout-staging.xendit.co/web/61ed71229690adcf0110bda7"
+                   bank_id: ""
+                   payment_method: ""
+                   paid_at: "0000-00-00T00:00:00.000Z"
+                   checkin_date: "2022-01-22"
+                   checkout_date: "2022-01-27"
+                   total_price: 500000
+                   status: PENDING
+    
+    Response200getalltransactionhost:
+      description: success get all transaction
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: number
+                example: 200
+              message:
+                type: string
+                example: Successful Operation
+              data:
+                example:
+                 - id: 1
                    user_id: 1
                    house_id: 1
+                   host_id: 2
                    invoice_id: "62E3D9455D1A4793AC2CC84902B725A7"
                    payment_url: "https://checkout-staging.xendit.co/web/61ed71229690adcf0110bda7"
                    bank_id: ""
@@ -879,6 +919,7 @@ components:
                  - id: 2
                    user_id: 1
                    house_id: 2
+                   host_id: 3
                    invoice_id: "62E3D9455D1A4793AC2CC84902B725A7"
                    payment_url: "https://checkout-staging.xendit.co/web/61ed71229690adcf0110bda7"
                    bank_id: ""
@@ -888,7 +929,7 @@ components:
                    checkout_date: "2022-01-27"
                    total_price: 500000
                    status: PENDING
-                   
+
     Response200gettransaction:
       description: success get transaction
       content:
@@ -907,6 +948,7 @@ components:
                    id: 1
                    user_id: 1
                    house_id: 1
+                   host_id: 2
                    invoice_id: "62E3D9455D1A4793AC2CC84902B725A7"
                    payment_url: "https://checkout-staging.xendit.co/web/61ed71229690adcf0110bda7"
                    bank_id: ""
