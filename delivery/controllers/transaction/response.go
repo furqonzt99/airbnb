@@ -4,6 +4,7 @@ type TransactionResponse struct {
 	ID int `json:"id"`
 	UserID int `json:"user_id"`
 	HouseID int `json:"house_id"`
+	HostID int `json:"host_id"`
 	InvoiceID string `json:"invoice_id"`
 	PaymentUrl string `json:"payment_url"`
 	PaymentChannel string `json:"payment_channel"`
