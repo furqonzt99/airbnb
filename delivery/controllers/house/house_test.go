@@ -19,6 +19,7 @@ import (
 	"github.com/labstack/gommon/log"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 var jwtToken string
@@ -255,6 +256,8 @@ func TestUpdateHouse(t *testing.T) {
 
 		context := e.NewContext(req, res)
 		context.SetPath("/houses/:id")
+		context.SetParamNames("id")
+		context.SetParamValues("1")
 
 		houseController := NewHouseControllers(mockHouseRepository{})
 		if err := middleware.JWT([]byte(constant.JWT_SECRET_KEY))(houseController.UpdateHouseController())(context); err != nil {
@@ -363,7 +366,14 @@ func (m mockUserRepository) Register(newUser model.User) (model.User, error) {
 
 func (m mockUserRepository) Login(email string) (model.User, error) {
 	hash, _ := bcrypt.GenerateFromPassword([]byte("test1234"), 14)
-	return model.User{Email: "test@gmail.com", Password: string(hash), Name: "tester"}, nil
+	return model.User{
+		Model:    gorm.Model{
+			ID: 1,
+		},
+		Name:     "tester",
+		Email:    "test@gmail.com",
+		Password: string(hash),
+	}, nil
 }
 
 func (m mockUserRepository) Get(userid int) (model.User, error) {
@@ -396,7 +406,19 @@ func (m mockHouseRepository) GetAllMine(userId int) ([]model.House, error) {
 }
 
 func (m mockHouseRepository) Get(houseId int) (model.House, error) {
-	return model.House{UserID: 1, Title: "Rumah Bagus", Address: "Jalan Ujung", City: "Indonesia", Price: 100000, Status: "open", Features: []model.Feature{{Name: "wifi"}}, Ratings: []model.Rating{{Rating: 5}}}, nil
+	return model.House{
+		Model:    gorm.Model{
+			ID:        1,
+		},
+		UserID:   1,
+		Title:    "Rumah Bagus",
+		Address:  "Jalan Ujung",
+		City:     "Indonesia",
+		Price:    100000,
+		Status:   "open",
+		Features: []model.Feature{{Name: "wifi"}},
+		Ratings:  []model.Rating{{Rating: 5}},
+	}, nil
 }
 
 func (m mockHouseRepository) Update(newHouse model.House, houseId, userId int) (model.House, error) {
