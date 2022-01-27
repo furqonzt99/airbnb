@@ -107,10 +107,10 @@ func (rc RatingController) Delete(c echo.Context) error {
 
 	user, _ := mw.ExtractTokenUser(c)
 
-	ratingData, err := rc.Repository.Delete(user.UserID, houseId)
+	_, err = rc.Repository.Delete(user.UserID, houseId)
 	if err != nil {
 		return c.JSON(http.StatusNotFound, common.NewNotFoundResponse())
 	}
 
-	return c.JSON(http.StatusOK, common.SuccessResponse(ratingData)) 
+	return c.JSON(http.StatusOK, common.NewSuccessOperationResponse()) 
 }
