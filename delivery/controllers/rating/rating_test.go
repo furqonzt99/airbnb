@@ -83,6 +83,7 @@ func TestCreateRating(t *testing.T) {
 	})
 
 	t.Run("Error Test Create Rating", func(t *testing.T) {
+
 		e := echo.New()
 		e.Validator = &RatingValidator{Validator: validator.New()}
 
@@ -394,6 +395,10 @@ func (m mockUserRepository) Get(userid int) (model.User, error) {
 	return model.User{Email: "test@gmail.com", Password: string(hash), Name: "tester"}, nil
 }
 
+func (rr mockUserRepository) IsCanGiveRating(userId, houseId int) (bool, error) {
+	return false, nil
+}
+
 func (m mockUserRepository) Update(newUser model.User, userId int) (model.User, error) {
 	hash, _ := bcrypt.GenerateFromPassword([]byte("test4321"), 14)
 	return model.User{Email: "test2@gmail.com", Password: string(hash), Name: "tester2"}, nil
@@ -418,6 +423,10 @@ func (m mockRatingRepository) Delete(userId, houseId int) (model.Rating, error) 
 	return model.Rating{HouseID: 1, UserID: 1, Rating: 5, Comment: "nyaman"}, nil
 }
 
+func (rr mockRatingRepository) IsCanGiveRating(userId, houseId int) (bool, error) {
+	return true, nil
+}
+
 type mockFalseRatingRepository struct{}
 
 func (m mockFalseRatingRepository) Create(model.Rating) (model.Rating, error) {
@@ -430,4 +439,8 @@ func (m mockFalseRatingRepository) Update(model.Rating) (model.Rating, error) {
 
 func (m mockFalseRatingRepository) Delete(userId, houseId int) (model.Rating, error) {
 	return model.Rating{HouseID: 1, UserID: 1, Rating: 5, Comment: "nyaman"}, errors.New("Error")
+}
+
+func (rr mockFalseRatingRepository) IsCanGiveRating(userId, houseId int) (bool, error) {
+	return true, nil
 }
