@@ -11,6 +11,7 @@ type House struct {
 	Address  string  `gorm:"NOT NULL"`
 	City     string  `gorm:"NOT NULL"`
 	Price    float64 `gorm:"NOT NULL"`
+	Status   string  `gorm:"NOT NULL;default:open"`
 	User     User
 	Features []Feature `gorm:"many2many:house_has_features;"`
 	Ratings  []Rating

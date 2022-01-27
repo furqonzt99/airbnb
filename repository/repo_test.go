@@ -228,10 +228,8 @@ func TestHouse(t *testing.T) {
 		houseId := 100
 		userId := 100
 
-		res, err := houseRepo.Update(mockHouse, houseId, userId)
-		assert.Nil(t, err)
-		assert.Equal(t, res.Title, "rumah2")
-		assert.Equal(t, res.Address, "jalan awal")
+		_, err := houseRepo.Update(mockHouse, houseId, userId)
+		assert.NotNil(t, err)
 	})
 
 	t.Run("Delete House", func(t *testing.T) {

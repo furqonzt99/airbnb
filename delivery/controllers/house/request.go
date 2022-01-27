@@ -13,6 +13,7 @@ type CreateHouseRequestFormat struct {
 	City     string  `json:"city" form:"city" validate:"required"`
 	Price    float64 `json:"price" form:"price" validate:"required"`
 	Features []int   `json:"features" form:"features" validate:"required"`
+	Status   string  `json:"status" form:"status"`
 }
 
 type PutHouseRequestFormat struct {
@@ -21,6 +22,7 @@ type PutHouseRequestFormat struct {
 	City     string  `json:"city" form:"city" validate:"required"`
 	Price    float64 `json:"price" form:"price" validate:"required"`
 	Features []int   `json:"features" form:"features" validate:"required"`
+	Status   string  `json:"status" form:"status"`
 }
 
 type HouseValidator struct {

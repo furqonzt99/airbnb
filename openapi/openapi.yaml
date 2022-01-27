@@ -310,6 +310,32 @@ paths:
           $ref: '#/components/responses/Response400'
         '401':
           $ref: '#/components/responses/Responsejwtexpired'
+  /transactions/reschedule/{transactionId}:
+    put:
+      security:
+        - bearerAuth: []
+      summary: Create transaction
+      tags:
+        - Transactions
+      parameters:
+        - name: transactionId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                checkin_date: "2022-01-19"
+      responses:
+        '200':
+          $ref: '#/components/responses/Response200'
+        '400':
+          $ref: '#/components/responses/Response400'
+        '401':
+          $ref: '#/components/responses/Responsejwtexpired'
   /transactions:
     get:
       security:
