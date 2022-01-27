@@ -46,13 +46,13 @@ func (tr *TransactionRepository) GetByTransactionId(userId, trxId int) (model.Tr
 }
 
 func (tr *TransactionRepository) GetHostId(houseId int) (int, error) {
-	var host model.House
+	var house model.House
 
-	if err := tr.db.Select("user_id").First(&host, houseId).Error; err != nil {
-		return int(host.UserID), err
+	if err := tr.db.Select("user_id").First(&house, houseId).Error; err != nil {
+		return int(house.UserID), err
 	}
 
-	return int(host.UserID), nil
+	return int(house.UserID), nil
 }
 
 func (tr *TransactionRepository) IsHouseAvailable(houseId int, checkinDate, checkoutDate time.Time) (bool, error) {
@@ -82,7 +82,7 @@ func (tr *TransactionRepository) IsHouseAvailableReschedule(trxId, houseId int, 
 func (tr *TransactionRepository) Get(userId int) (model.Transaction, error) {
 	var transaction model.Transaction
 
-	if err := tr.db.Preload("User").Preload("House").Where("user_id = ? OR host_id = ?", userId).First(&transaction).Error; err != nil {
+	if err := tr.db.Preload("User").Preload("House").Where("user_id = ? OR host_id = ?", userId, userId).First(&transaction).Error; err != nil {
 		return transaction, err
 	}
 
