@@ -173,8 +173,9 @@ func TestHouse(t *testing.T) {
 		offset := 0
 		pageSize := 10
 		search := "rumah"
+		city := "indonesia"
 
-		res, err := houseRepo.GetAll(offset, pageSize, search)
+		res, err := houseRepo.GetAll(offset, pageSize, search, city)
 		assert.Nil(t, err)
 		assert.Equal(t, res[0].Title, "rumah")
 		assert.Equal(t, res[0].Address, "jalan ujung")
