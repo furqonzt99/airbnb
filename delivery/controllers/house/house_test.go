@@ -367,7 +367,7 @@ func (m mockUserRepository) Register(newUser model.User) (model.User, error) {
 func (m mockUserRepository) Login(email string) (model.User, error) {
 	hash, _ := bcrypt.GenerateFromPassword([]byte("test1234"), 14)
 	return model.User{
-		Model:    gorm.Model{
+		Model: gorm.Model{
 			ID: 1,
 		},
 		Name:     "tester",
@@ -407,8 +407,8 @@ func (m mockHouseRepository) GetAllMine(userId int) ([]model.House, error) {
 
 func (m mockHouseRepository) Get(houseId int) (model.House, error) {
 	return model.House{
-		Model:    gorm.Model{
-			ID:        1,
+		Model: gorm.Model{
+			ID: 1,
 		},
 		UserID:   1,
 		Title:    "Rumah Bagus",
