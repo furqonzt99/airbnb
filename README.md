@@ -1,11 +1,8 @@
-```
-Import json collection for postman from the openapi folder 
-```
+##Import json collection for postman from the openapi folder 
     airbnb/openapi/Airbnb.postman_collection.json   
 
-```
-Add file with name ".env" on the main folder with text as follows:
-```
+##Add file with name ".env" on the main folder with text as follows:
+
 ===START===
 
 APP_PORT=1326
