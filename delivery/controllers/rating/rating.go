@@ -46,7 +46,10 @@ func (rc RatingController) Create(c echo.Context) error {
 
 	ratingData, err := rc.Repository.Create(data)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
+		ratingData, err = rc.Repository.Update(data)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, common.NewBadRequestResponse())
+		}
 	}
 
 	response := RatingResponse{
