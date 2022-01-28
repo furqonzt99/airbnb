@@ -1,0 +1,619 @@
+{
+	"info": {
+		"_postman_id": "2553a792-c651-42e8-96c2-02086353e0e8",
+		"name": "Airbnb",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Features",
+			"item": [
+				{
+					"name": "Get All",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://airbnb-services-furqonzt99.cloud.okteto.net/features",
+							"protocol": "https",
+							"host": [
+								"airbnb-services-furqonzt99",
+								"cloud",
+								"okteto",
+								"net"
+							],
+							"path": [
+								"features"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"test123@gmail.com\",\n  \"password\": \"test123231\",\n  \"name\": \"tester\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://airbnb-services-furqonzt99.cloud.okteto.net/register",
+							"protocol": "https",
+							"host": [
+								"airbnb-services-furqonzt99",
+								"cloud",
+								"okteto",
+								"net"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"user1@gmail.com\",\n  \"password\": \"1234qwer\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://airbnb-services-furqonzt99.cloud.okteto.net/login",
+							"protocol": "https",
+							"host": [
+								"airbnb-services-furqonzt99",
+								"cloud",
+								"okteto",
+								"net"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://airbnb-services-furqonzt99.cloud.okteto.net/profile",
+							"protocol": "https",
+							"host": [
+								"airbnb-services-furqonzt99",
+								"cloud",
+								"okteto",
+								"net"
+							],
+							"path": [
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"test@gmail.com\",\n  \"password\": \"test12345\",\n  \"name\": \"tester\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://airbnb-services-furqonzt99.cloud.okteto.net/users",
+							"protocol": "https",
+							"host": [
+								"airbnb-services-furqonzt99",
+								"cloud",
+								"okteto",
+								"net"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJlbWFpbCI6InRlc3QxMjNAZ21haWwuY29tIiwiZXhwIjoxNjQzNTgyMzI0LCJ1c2VySWQiOjZ9.9yydbEFX2hMn3WJ2dPRaTLX_hP0YjbPhw8bYLdSAQhs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://airbnb-services-furqonzt99.cloud.okteto.net/users",
+							"protocol": "https",
+							"host": [
+								"airbnb-services-furqonzt99",
+								"cloud",
+								"okteto",
+								"net"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Transaction",
+			"item": [
+				{
+					"name": "Booking",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"house_id\": 10,\n  \"checkin_date\": \"2022-01-29\",\n  \"checkout_date\": \"2022-01-30\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://airbnb-services-furqonzt99.cloud.okteto.net/transactions/booking",
+							"protocol": "https",
+							"host": [
+								"airbnb-services-furqonzt99",
+								"cloud",
+								"okteto",
+								"net"
+							],
+							"path": [
+								"transactions",
+								"booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reschedule",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"checkin_date\": \"2022-02-01\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://airbnb-services-furqonzt99.cloud.okteto.net/transactions/reschedule/1",
+							"protocol": "https",
+							"host": [
+								"airbnb-services-furqonzt99",
+								"cloud",
+								"okteto",
+								"net"
+							],
+							"path": [
+								"transactions",
+								"reschedule",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://airbnb-services-furqonzt99.cloud.okteto.net/transactions",
+							"protocol": "https",
+							"host": [
+								"airbnb-services-furqonzt99",
+								"cloud",
+								"okteto",
+								"net"
+							],
+							"path": [
+								"transactions"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "PAID",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "PENDING",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "EXPIRED",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Host",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://airbnb-services-furqonzt99.cloud.okteto.net/transactions/host",
+							"protocol": "https",
+							"host": [
+								"airbnb-services-furqonzt99",
+								"cloud",
+								"okteto",
+								"net"
+							],
+							"path": [
+								"transactions",
+								"host"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "PAID",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "PENDING",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "EXPIRED",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://airbnb-services-furqonzt99.cloud.okteto.net/transactions/1",
+							"protocol": "https",
+							"host": [
+								"airbnb-services-furqonzt99",
+								"cloud",
+								"okteto",
+								"net"
+							],
+							"path": [
+								"transactions",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Rating",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"house_id\": 8,\n  \"rating\": 5,\n  \"comment\": \"nyaman\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://airbnb-services-furqonzt99.cloud.okteto.net/ratings",
+							"protocol": "https",
+							"host": [
+								"airbnb-services-furqonzt99",
+								"cloud",
+								"okteto",
+								"net"
+							],
+							"path": [
+								"ratings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"rating\": 3,\n  \"comment\": \"biasa\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://airbnb-services-furqonzt99.cloud.okteto.net/ratings/1",
+							"protocol": "https",
+							"host": [
+								"airbnb-services-furqonzt99",
+								"cloud",
+								"okteto",
+								"net"
+							],
+							"path": [
+								"ratings",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://airbnb-services-furqonzt99.cloud.okteto.net/ratings/1",
+							"protocol": "https",
+							"host": [
+								"airbnb-services-furqonzt99",
+								"cloud",
+								"okteto",
+								"net"
+							],
+							"path": [
+								"ratings",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "House",
+			"item": [
+				{
+					"name": "My House",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://airbnb-services-furqonzt99.cloud.okteto.net/myhouses",
+							"protocol": "https",
+							"host": [
+								"airbnb-services-furqonzt99",
+								"cloud",
+								"okteto",
+								"net"
+							],
+							"path": [
+								"myhouses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All House",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://airbnb-services-furqonzt99.cloud.okteto.net/houses",
+							"protocol": "https",
+							"host": [
+								"airbnb-services-furqonzt99",
+								"cloud",
+								"okteto",
+								"net"
+							],
+							"path": [
+								"houses"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "pondok",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "perpage",
+									"value": "5",
+									"disabled": true
+								},
+								{
+									"key": "city",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"rumah pondok indah\",\n  \"address\": \"bikini bottom\",\n  \"city\": \"jakarta\",\n  \"price\": 100000,\n  \"features\": [\n    1,\n    2\n  ],\n  \"status\": \"open\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://airbnb-services-furqonzt99.cloud.okteto.net/houses",
+							"protocol": "https",
+							"host": [
+								"airbnb-services-furqonzt99",
+								"cloud",
+								"okteto",
+								"net"
+							],
+							"path": [
+								"houses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"rumah pondok gede\",\n  \"address\": \"bikini bottom\",\n  \"city\": \"jakarta\",\n  \"price\": 100000,\n  \"features\": [\n    1,\n    2,\n    4,\n    8\n  ],\n  \"status\": \"open\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://airbnb-services-furqonzt99.cloud.okteto.net/houses/2",
+							"protocol": "https",
+							"host": [
+								"airbnb-services-furqonzt99",
+								"cloud",
+								"okteto",
+								"net"
+							],
+							"path": [
+								"houses",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://airbnb-services-furqonzt99.cloud.okteto.net/houses/2",
+							"protocol": "https",
+							"host": [
+								"airbnb-services-furqonzt99",
+								"cloud",
+								"okteto",
+								"net"
+							],
+							"path": [
+								"houses",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJlbWFpbCI6InVzZXIxQGdtYWlsLmNvbSIsImV4cCI6MTY0MzU4MjM4NiwidXNlcklkIjoxfQ.QKjHBy21txzh2dJawRtiPcgoCkW5N7SvhGLHZPkQOvY",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
